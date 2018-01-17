@@ -1,0 +1,76 @@
+.status_button
+{
+	position: absolute;
+	top: 15px;
+	right: 20px;
+	font-size: 24px;
+	background-color: #55F;
+}
+.ordinary_button
+{
+	font-size: 24px;
+	background-color: #55F;
+}
+.floor_div
+{
+	border: 1px solid #88F;
+	width: 50%;
+	height: 500px;
+}
+.floor_image
+{
+	border: 1px solid #000;
+	width: 75%;
+	height: 350px;
+	padding: 0px;
+}
+.class_image
+{
+	display: inline-block;
+	border: 1px solid #555;
+	width: 32%;
+	height: 100px;
+	margin-top: 5px;
+	background-color: #99A;
+	font-size: 36px;
+}
+.menu_item
+{
+	display: inline-block;
+	width: 33.33%;
+	text-align: center;
+	padding: 8px 0px;
+	font-size: 22px;
+}
+.tr_underline th, .tr_underline td
+{
+	border-bottom: 1px solid #999;
+	height: 32px;
+}
+.right_line
+{
+	border-right: 1px solid #999;
+}
+.bottom_line
+{
+	border-bottom: 1px solid #999;
+}
+th, td
+{
+	padding: 8px;
+}
+input[type=text], [type=password], select
+{
+	font-size: 18px;
+}
+input[type=date]
+{
+	width: 140px;
+	height: 24px;
+}
+hr
+{
+	border: 1px solid #BBB;
+	margin: 0px;
+	color: #333;
+}
