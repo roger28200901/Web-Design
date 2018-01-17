@@ -2,7 +2,7 @@
 error_reporting('e_all ~& e_notice');
 session_start();
 date_default_timezone_set('Asia/Taipei');
-$dsn = 'mysql:host=localhost;dbname=competition_44_region';
+$dsn = 'mysql:host=localhost;dbname=web_design_44_region';
 try {
 	$link = new PDO($dsn, 'admin', 1234);
 }
