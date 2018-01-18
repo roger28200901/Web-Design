@@ -46,8 +46,7 @@ window.onload = function ()
         });
     });
 
-    var activeBrick;
-
+    /* let bricks be movable */
     document.querySelectorAll('.brick').forEach(function (brick) {
         brick.addEventListener('mousedown', function (event) {
             activeBrick = brick;
@@ -64,7 +63,8 @@ window.onload = function ()
                 brick.style.left = left + event.pageX - cursorX + 'px';
                 brick.style.top = top + event.pageY - cursorY + 'px';
             });
-            
+
+            /* mouse up action */
             document.querySelector('body').addEventListener('mouseup', function (event) {
                 var fromStackId = brick.parentElement.dataset.id;
                 var toStackId = document.elementsFromPoint(event.pageX, event.pageY).find(function (element) {

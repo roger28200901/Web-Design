@@ -21,7 +21,7 @@
         
         /* get all scores */
         try {
-            $statement = $link->prepare('select * from `scores` where `difficulty`=? order by `steps` asc');
+            $statement = $link->prepare('select * from `scores` where `difficulty`=? and `steps` > 0 order by `steps` asc');
             $link->beginTransaction();
             $statement->execute([$difficulty]);
             $scores = $statement->fetchAll();

@@ -64,6 +64,7 @@
     $_SESSION['data'] = $data;
     $_SESSION['error_message'] = '';
     $_SESSION['complete'] = false;
+    $_SESSION['moves'] = json_encode([]);
 
     header('location:game.php');
     exit();

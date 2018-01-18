@@ -20,5 +20,5 @@
         exit();
     }
 
-    header("location:score.php?difficulty=$difficulty");
+    header("location:scores.php?difficulty=$difficulty");
     exit();
