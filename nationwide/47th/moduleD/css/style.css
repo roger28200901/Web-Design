@@ -1,0 +1,331 @@
+html {
+    font: 16px/1.25 "Microsoft Yahei";
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    outline: 0;
+}
+
+body {
+    background: #f1f1f1;
+    color: #666;
+}
+
+a {
+    text-decoration: none;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+#container,
+#container-game {
+    height: auto;
+    width: 620px;
+    margin: 100px auto 0;
+    box-shadow: 0 1px 1px #aaa;
+}
+
+#container-game {
+    width: 800px!important;
+}
+
+#container:after,
+#container:before,
+.game:after,
+.game:before,
+.row:after,
+.row:before {
+    display: table;
+    content: '';
+}
+
+#container:after,
+.game:after,
+.row:after {
+    clear: both;
+}
+
+.layout {
+    background: #fff;
+    padding: 20px;
+    height: 370px;
+    width: 580px;
+    float: left;
+}
+
+.game {
+    margin-top: 60px;
+}
+
+.col {
+    width: 157px;
+    height: 100px;
+    float: left;
+    margin: 0 17px;
+    text-align: center;
+    padding-top: 48px;
+    padding-bottom: 27px;
+    position: relative;
+    background: url(../img/col.png) center center no-repeat;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: end;
+    -webkit-justify-content: flex-end;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
+}
+
+.brick {
+    height: 20px;
+    border-radius: 5px;
+    margin: 0 auto;
+    background: #3498DB;
+    border: 1px solid #2880BA;
+    vertical-align: middle;
+    z-index: 9999;
+}
+
+.b5 {
+    width: 120px;
+}
+
+.b4 {
+    width: 100px;
+}
+
+.b3 {
+    width: 80px;
+}
+
+.b2 {
+    width: 60px;
+}
+
+.b1 {
+    width: 40px;
+}
+
+.none {
+    margin-bottom: -20px!important;
+    background: #ddd;
+}
+
+.desc {
+    margin-top: 20px;
+    margin-left: 18px;
+    text-align: center;
+}
+
+.btn {
+    padding: 10px 15px;
+    text-align: center;
+    border-radius: 3px;
+    margin: 0 auto;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #2880BA;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #2077A8;
+}
+
+.btn-secondary {
+    background: #ddd;
+    color: #666;
+}
+
+.btn-secondary:hover {
+    background: #d5d5d5;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    text-align: center;
+}
+
+h2 {
+    font-size: 1.7em;
+}
+
+.module {
+    background: #AF7849;
+    color: #fff;
+    float: left;
+    width: 140px;
+    padding: 20px;
+    height: 350px;
+}
+
+.module h1,
+.module h2,
+.module h3,
+.module h4 {
+    text-align: left;
+}
+
+.module h4 {
+    color: #5A3A1F;
+}
+
+.mod {
+    margin-bottom: 20px;
+}
+
+.hide {
+    display: none;
+}
+
+.gameRunning
+.layout,
+.gameRunning
+.module {
+    height: 400px;
+}
+
+.input {
+    padding: 6px 5%;
+    width: 90%;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    margin-bottom: 10px;
+}
+
+.config {
+    width: 200px;
+    margin: 10px auto 0!important;
+}
+
+.form {
+    margin-top: 10px;
+}
+
+.left {
+    float: left;
+}
+
+.ui-place {
+    background: #4072b8;
+}
+
+.row {
+    margin: .5em 0;
+}
+
+#rule {
+    padding: 1em;
+}
+
+.success {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, .3);
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+
+.success > .container {
+    top: 0;
+    position: fixed;
+    margin-top: 0;
+    margin-right: auto;
+    margin-bottom: 0;
+    margin-left: auto;
+    padding: 5px;
+    width: 350px;
+    z-index: 1100;
+    text-align: center;
+    display: inline;
+    left: 0;
+    right: 0;
+    border: 1px solid #a2d246;
+    margin-top: 200px;
+    background: #ebf8a4;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    box-shadow: 0 5px 90px #888;
+    -moz-box-shadow: 0 5px 90px #888;
+    -webkit-box-shadow: 0 5px 90px #888;
+}
+
+.row label {
+    width: 100px;
+    font-weight: 700;
+    text-align: right;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+#rule > div {
+    white-space: pre-line;
+}
+
+.clear {
+    clear: both;
+}
+
+.col3 {
+    width: 157px;
+    float: left;
+    margin: 0 17px;
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    position: relative;
+}
+
+.colNumber {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.gameRunning .game {
+    margin-top: 30px;
+}
+
+.moveButton button:nth-child(1) {
+    float: left;
+}
+
+.moveButton button:nth-child(2) {
+    float: right;
+}
+
+.moveButton::after {
+    content: "";
+    clear: both;
+    height: 1px;
+    display: block;
+}
+
+#asideFuncButtons button{
+	margin-bottom:10px;
+	display:block;
+	width:100%;
+}
+
+#avatarDisplay {
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+}
