@@ -64,7 +64,7 @@
                                         foreach ($bricks as $index => $brick) {
                                             if ($brick == $i) {
                                                 ?>
-                                                <div class="brick b<?= $index + 1 ?>" data-id="<?= $index + 1 ?>"></div>
+                                                <div class="brick b<?= $index + 1 ?>" data-id="<?= $index + 1 ?>" draggable="true"></div>
                                                 <?php
                                             }
                                         }

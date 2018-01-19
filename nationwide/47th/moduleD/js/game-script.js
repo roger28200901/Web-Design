@@ -1,3 +1,78 @@
+window.onload = function ()
+{
+    var fromStackId = 0,
+        toStackId = 0,
+        brickId = 0,
+        url = '';
+
+    document.querySelectorAll('.brick').forEach(function (brick) {
+        brick.addEventListener('dragstart', dragStart, false);
+    });
+
+    document.querySelectorAll('.col').forEach(function (stack) {
+        stack.addEventListener('dragover', dragOver, false);
+        stack.addEventListener('drop', drop, false);
+    });
+
+    document.querySelectorAll('.col3>button').forEach(function (moveButton) {
+        moveButton.addEventListener('click', moveByButton, false);
+    });
+
+    var errorMessage = document.getElementById('errorMessage').value;
+    if (errorMessage) {
+        alert(errorMessage);
+    }
+
+    if (document.getElementById('complete').value) {
+        var url = 'complete.php';
+        var interval = 5000;
+        setInterval(function () {
+            location.href = url;
+        }, interval);
+    }
+}
+
+function dragStart(event)
+{
+    fromStackId = this.parentElement.dataset.id;
+    brickId = this.dataset.id;
+}
+
+function dragOver(event)
+{
+    event.preventDefault();
+    return false;
+}
+
+function drop(event)
+{
+    toStackId = this.dataset.id;
+    url = 'move.php';
+    location.change({
+        'fromStackId': fromStackId,
+        'toStackId': toStackId,
+        'brickId': brickId,
+    }, url)
+    event.preventDefault();
+    return false;
+}
+
+function moveByButton(event) {
+    var fromStackId = this.dataset.id;
+    var toStackId = this.textContent;
+    var brickId = document.querySelector('.col[data-id="' + fromStackId + '"]').firstElementChild.dataset.id;
+    var url = 'move.php';
+    if (fromStackId == toStackId) {
+        location.reload();
+        return false;
+    }
+    location.change({
+        'fromStackId': fromStackId,
+        'toStackId': toStackId,
+        'brickId': brickId,
+    }, url)
+}
+
 location.get = function (k)
 {
     var data = {};
@@ -29,71 +104,3 @@ location.change = function (data, url)
 
     this.href = url + '?' + arr.join('&');
 };
-
-window.onload = function ()
-{
-    document.querySelectorAll('.col3>button').forEach(function (moveButton) {
-        moveButton.addEventListener('click', function () {
-            var fromStackId = this.dataset.id;
-            var toStackId = this.textContent;
-            var brickId = document.querySelector('.col[data-id="' + fromStackId + '"]').firstElementChild.dataset.id;
-            var url = 'move.php';
-            location.change({
-                'fromStackId': fromStackId,
-                'toStackId': toStackId,
-                'brickId': brickId,
-            }, url)
-        });
-    });
-
-    /* let bricks be movable */
-    document.querySelectorAll('.brick').forEach(function (brick) {
-        brick.addEventListener('mousedown', function (event) {
-            activeBrick = brick;
-
-            /* get cursor and brick position */
-            var cursorX = event.pageX;
-            var cursorY = event.pageY;
-            var left = brick.offsetLeft;
-            var top = brick.offsetTop;
-
-            /* mouse move action */
-            document.querySelector('body').addEventListener('mousemove', function (event) {
-                brick.style.position = 'absolute';
-                brick.style.left = left + event.pageX - cursorX + 'px';
-                brick.style.top = top + event.pageY - cursorY + 'px';
-            });
-
-            /* mouse up action */
-            document.querySelector('body').addEventListener('mouseup', function (event) {
-                var fromStackId = brick.parentElement.dataset.id;
-                var toStackId = document.elementsFromPoint(event.pageX, event.pageY).find(function (element) {
-                    return element.getAttribute('class') == 'col';
-                }).dataset.id;
-                var brickId = brick.dataset.id;
-                var url = 'move.php';
-                if (fromStackId == toStackId) {
-                    location.reload();
-                }
-                location.change({
-                    'fromStackId': fromStackId,
-                    'toStackId': toStackId,
-                    'brickId': brickId,
-                }, url);
-            });
-        });
-    });
-
-    var errorMessage = document.getElementById('errorMessage').value;
-    if (errorMessage) {
-        alert(errorMessage);
-    }
-
-    if (document.getElementById('complete').value) {
-        var url = 'complete.php';
-        var interval = 5000;
-        setInterval(function () {
-            location.href = url;
-        }, interval);
-    }
-}
