@@ -8,6 +8,7 @@
     $steps = $data->steps;
     $difficulty = $data->difficulty;
     $bricks = $data->bricks;
+    $error_message = '';
     $moves = json_decode($_SESSION['moves']);
 
     $move = array_pop($moves);
@@ -32,6 +33,7 @@
     $data = json_encode(compact('id', 'steps', 'difficulty', 'bricks'));
     $_SESSION['nickname'] = $nickname;
     $_SESSION['data'] = $data;
+    $_SESSION['error_message'] = $error_message;
     $_SESSION['moves'] = json_encode($moves);
 
     header($url);

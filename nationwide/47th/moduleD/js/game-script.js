@@ -79,7 +79,11 @@ function drop(event)
 function moveByButton(event) {
     var fromStackId = this.dataset.id;
     var toStackId = this.textContent;
-    var brickId = document.querySelector('.col[data-id="' + fromStackId + '"]').firstElementChild.dataset.id;
+    var brick = document.querySelector('.col[data-id="' + fromStackId + '"]').firstElementChild;
+    if (!brick) {
+        return false;
+    }
+    var brickId = brick.dataset.id;
     var url = 'move.php';
     if (fromStackId == toStackId) {
         location.reload();
