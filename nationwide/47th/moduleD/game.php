@@ -26,11 +26,13 @@
 
         $error_message = $_SESSION['error_message'];
         $complete = $_SESSION['complete'];
+        $is_auto = $_SESSION['auto'];
     ?>
 
     <body>
         <input id="errorMessage" type="hidden" value="<?= $error_message ?>">
         <input id="complete" type="hidden" value="<?= $complete ?>">
+        <input id="isAuto" type="hidden" value="<?= $is_auto ?>">
         <div<?= $complete ? '' : ' hidden' ?> class="success">
             <div class="container">
                 <div class="message">

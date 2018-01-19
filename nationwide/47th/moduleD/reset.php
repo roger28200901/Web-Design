@@ -3,6 +3,7 @@
 
     $data = json_decode($_SESSION['data']);
     $id = $data->id;
+
     /* delete user record */
     try {
         $statement = $link->prepare('delete from `scores` where `id`=?');

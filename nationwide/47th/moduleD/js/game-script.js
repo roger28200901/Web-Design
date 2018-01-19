@@ -27,7 +27,7 @@ window.onload = function ()
     });
 
     document.getElementById('repeat').addEventListener('click', function (event) {
-        location.href = 'repeat';
+        location.href = 'repeat.php';
     });
 
     var errorMessage = document.getElementById('errorMessage').value;
@@ -48,6 +48,13 @@ window.onload = function ()
     } else {
         document.getElementById('undo').style.display = 'none';
         document.getElementById('repeat').style.display = 'none';
+    }
+
+    if (document.getElementById('isAuto').value) {
+        var interval = 500;
+        setInterval(function () {
+            location.href = 'auto.php';
+        }, interval);
     }
 }
 
@@ -93,7 +100,7 @@ function moveByButton(event) {
         'fromStackId': fromStackId,
         'toStackId': toStackId,
         'brickId': brickId,
-    }, url)
+    }, url);
 }
 
 location.get = function (k)

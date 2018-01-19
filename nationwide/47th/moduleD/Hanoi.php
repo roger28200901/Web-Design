@@ -16,6 +16,16 @@ class Hanoi
         $this->moves = $moves;
     }
 
+    public function init()
+    {
+        $this->steps = 0;
+        for ($i = 0; $i < $this->difficulty; $i++) {
+            $this->bricks[$i] = 0;
+        }
+        $this->error_message = '';
+        $this->moves = [];
+    }
+
     public function tryMove($from_stack_id, $to_stack_id, $brick_id)
     {
         for ($i = 0; $i < $brick_id; $i++) {
@@ -48,7 +58,7 @@ class Hanoi
 
     public function auto()
     {
-        $this->hanoi(1, 2, 3, $this->difficulty);
+        $this->hanoi(0, 1, 2, $this->difficulty - 1);
     }
 
     public function complete()
@@ -73,7 +83,7 @@ class Hanoi
 
     private function hanoi($from_stack_id, $temp_stack_id, $to_stack_id, $level)
     {
-        if (1 >= $level) {
+        if (1 > $level) {
             $this->putMove($from_stack_id, $to_stack_id, $level);
         } else {
             $this->hanoi($from_stack_id, $to_stack_id, $temp_stack_id, $level - 1);
