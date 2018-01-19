@@ -74,6 +74,10 @@ function drop(event)
 {
     toStackId = this.dataset.id;
     url = 'move.php';
+    if (fromStackId == toStackId) {
+        location.reload();
+        return false;
+    }
     location.change({
         'fromStackId': fromStackId,
         'toStackId': toStackId,
