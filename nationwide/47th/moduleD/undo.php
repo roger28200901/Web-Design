@@ -11,15 +11,11 @@
     $error_message = '';
     $moves = json_decode($_SESSION['moves']);
 
-    $move = array_pop($moves);
-    $from_stack_id = $move->from_stack_id;
-    $to_stack_id = $move->to_stack_id;
-    $brick_id = $move->brick_id;
-
     $hanoi = new Hanoi($steps, $difficulty, $bricks, $moves);
-    $hanoi->undo($from_stack_id - 1, $to_stack_id - 1, $brick_id - 1);
+    $hanoi->undo();
     $steps = $hanoi->getSteps();
     $bricks = $hanoi->getBricks();
+    $moves = $hanoi->getMoves();
 
     $url = "location:game.php";
     if (count($moves)) {

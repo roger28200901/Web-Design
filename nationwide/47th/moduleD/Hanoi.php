@@ -32,11 +32,16 @@ class Hanoi
         }
         $this->move($from_stack_id, $to_stack_id, $brick_id);
         $this->steps++;
+        $this->putMove($from_stack_id, $to_stack_id, $brick_id);
         return true;
     }
 
-    public function undo($from_stack_id, $to_stack_id, $brick_id)
+    public function undo()
     {
+        $move = array_pop($this->moves);
+        $from_stack_id = $move->from_stack_id - 1;
+        $to_stack_id = $move->to_stack_id - 1;
+        $brick_id = $move->brick_id - 1;
         $this->move($to_stack_id, $from_stack_id, $brick_id);
         $this->steps--;
     }
@@ -64,7 +69,6 @@ class Hanoi
     private function move($from_stack_id, $to_stack_id, $brick_id)
     {
         $this->bricks[$brick_id] = $to_stack_id;
-        $this->putMove($from_stack_id, $to_stack_id, $brick_id);
     }
 
     private function hanoi($from_stack_id, $temp_stack_id, $to_stack_id, $level)
