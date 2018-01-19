@@ -6,12 +6,14 @@ class Hanoi
     private $difficulty = 0;
     private $bricks = [];
     private $error_message = '';
+    private $moves = [];
     
-    public function __construct($steps, $difficulty, $bricks)
+    public function __construct($steps, $difficulty, $bricks, $moves = [])
     {
         $this->steps = $steps;
         $this->difficulty = $difficulty;
         $this->bricks = $bricks;
+        $this->moves = $moves;
     }
 
     public function tryMove($from_stack_id, $to_stack_id, $brick_id)
@@ -28,14 +30,20 @@ class Hanoi
                 return false;
             }
         }
-        $this->move($to_stack_id, $brick_id);
+        $this->move($from_stack_id, $to_stack_id, $brick_id);
+        $this->steps++;
         return true;
     }
 
     public function undo($from_stack_id, $to_stack_id, $brick_id)
     {
-        $this->bricks[$brick_id] = $from_stack_id;
+        $this->move($to_stack_id, $from_stack_id, $brick_id);
         $this->steps--;
+    }
+
+    public function auto()
+    {
+        $this->hanoi(1, 2, 3, $this->difficulty);
     }
 
     public function complete()
@@ -48,24 +56,34 @@ class Hanoi
         return true;
     }
 
-    public function getsteps()
-    {
-        return $this->steps;
-    }
+    public function getsteps() { return $this->steps; }
+    public function getBricks() { return $this->bricks; }
+    public function getErrorMessage() { return $this->error_message; }
+    public function getMoves() { return $this->moves; }
 
-    public function getBricks()
-    {
-        return $this->bricks;
-    }
-
-    public function getErrorMessage()
-    {
-        return $this->error_message;
-    }
-
-    private function move($to_stack_id, $brick_id)
+    private function move($from_stack_id, $to_stack_id, $brick_id)
     {
         $this->bricks[$brick_id] = $to_stack_id;
-        $this->steps++;
+        $this->putMove($from_stack_id, $to_stack_id, $brick_id);
+    }
+
+    private function hanoi($from_stack_id, $temp_stack_id, $to_stack_id, $level)
+    {
+        if (1 >= $level) {
+            $this->putMove($from_stack_id, $to_stack_id, $level);
+        } else {
+            $this->hanoi($from_stack_id, $to_stack_id, $temp_stack_id, $level - 1);
+            $this->putMove($from_stack_id, $to_stack_id, $level);
+            $this->hanoi($temp_stack_id, $from_stack_id, $to_stack_id, $level - 1);
+        }
+    }
+
+    private function putMove($from_stack_id, $to_stack_id, $brick_id)
+    {
+        $this->moves[] = [
+            'from_stack_id' => $from_stack_id + 1,
+            'to_stack_id' => $to_stack_id + 1,
+            'brick_id' => $brick_id + 1,
+        ];
     }
 }

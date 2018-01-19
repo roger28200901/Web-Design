@@ -16,7 +16,7 @@
     $to_stack_id = $move->to_stack_id;
     $brick_id = $move->brick_id;
 
-    $hanoi = new Hanoi($steps, $difficulty, $bricks);
+    $hanoi = new Hanoi($steps, $difficulty, $bricks, $moves);
     $hanoi->undo($from_stack_id - 1, $to_stack_id - 1, $brick_id - 1);
     $steps = $hanoi->getSteps();
     $bricks = $hanoi->getBricks();

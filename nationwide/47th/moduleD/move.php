@@ -13,12 +13,13 @@
     $difficulty = $data->difficulty;
     $bricks = $data->bricks;
     $error_message = '';
+    $moves = json_decode($_SESSION['moves']);
 
-    $hanoi = new Hanoi($steps, $difficulty, $bricks);
+    $hanoi = new Hanoi($steps, $difficulty, $bricks, $moves);
     if ($hanoi->tryMove($from_stack_id - 1, $to_stack_id - 1, $brick_id - 1)) {
         $steps = $hanoi->getsteps();
         $bricks = $hanoi->getBricks();
-        setMove($from_stack_id, $to_stack_id, $brick_id);
+        $moves = $hanoi->getMoves();
     } else {
         $error_message = $hanoi->getErrorMessage();
     }
@@ -28,17 +29,7 @@
     $_SESSION['data'] = $data;
     $_SESSION['complete'] = $hanoi->complete();
     $_SESSION['error_message'] = $error_message;
+    $_SESSION['moves'] = json_encode($moves);
 
     header("location:game.php?fromStackId=$from_stack_id&toStackId=$to_stack_id&brickId=$brick_id");
     exit();
-
-    function setMove($from_stack_id, $to_stack_id, $brick_id)
-    {
-        $moves = json_decode($_SESSION['moves']);
-        $moves[] = [
-            'from_stack_id' => $from_stack_id,
-            'to_stack_id' => $to_stack_id,
-            'brick_id' => $brick_id
-        ];
-        $_SESSION['moves'] = json_encode($moves);
-    }
