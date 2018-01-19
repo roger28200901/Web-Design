@@ -18,6 +18,18 @@ window.onload = function ()
         moveButton.addEventListener('click', moveByButton, false);
     });
 
+    document.getElementById('undo').addEventListener('click', function (event) {
+        location.href = 'undo.php';
+    });
+
+    document.getElementById('auto').addEventListener('click', function (event) {
+        location.href = 'auto.php';
+    });
+
+    document.getElementById('repeat').addEventListener('click', function (event) {
+        location.href = 'repeat';
+    });
+
     var errorMessage = document.getElementById('errorMessage').value;
     if (errorMessage) {
         alert(errorMessage);
@@ -29,6 +41,13 @@ window.onload = function ()
         setInterval(function () {
             location.href = url;
         }, interval);
+    }
+
+    if (location.get('brickId')) {
+        document.getElementById('auto').style.display = 'none';
+    } else {
+        document.getElementById('undo').style.display = 'none';
+        document.getElementById('repeat').style.display = 'none';
     }
 }
 

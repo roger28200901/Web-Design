@@ -32,6 +32,12 @@ class Hanoi
         return true;
     }
 
+    public function undo($from_stack_id, $to_stack_id, $brick_id)
+    {
+        $this->bricks[$brick_id] = $from_stack_id;
+        $this->steps--;
+    }
+
     public function complete()
     {
         foreach ($this->bricks as $brick) {

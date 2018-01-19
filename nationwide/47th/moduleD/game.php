@@ -104,7 +104,7 @@
                         <h2><?= $steps ?></h2>
                     </div>
                      <div class="mod" id="asideFuncButtons">
-                        <button id="back">上一步</button>
+                        <button id="undo">上一步</button>
                         <button id="auto">自動解答</button>
                         <button id="repeat">重播</button>
                      </div>
