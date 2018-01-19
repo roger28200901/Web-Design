@@ -17,6 +17,7 @@
     if ($hanoi->tryMove($from_stack_id - 1, $to_stack_id - 1, $brick_id - 1)) {
         $steps = $hanoi->getsteps();
         $bricks = $hanoi->getBricks();
+        setMove($from_stack_id, $to_stack_id, $brick_id);
     } else {
         $_SESSION['error_message'] = $hanoi->getErrorMessage();
     }
@@ -28,3 +29,14 @@
 
     header("location:game.php?fromStackId=$from_stack_id&toStackId=$to_stack_id&brickId=$brick_id");
     exit();
+
+    function setMove($from_stack_id, $to_stack_id, $brick_id)
+    {
+        $moves = json_decode($_SESSION['moves']);
+        $moves[] = [
+            'from_stack_id' => $from_stack_id,
+            'to_stack_id' => $to_stack_id,
+            'brick_id' => $brick_id
+        ];
+        $_SESSION['moves'] = json_encode($moves);
+    }
