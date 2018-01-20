@@ -26,7 +26,7 @@ class Hanoi
         $this->moves = [];
     }
 
-    public function tryMove($from_stack_id, $to_stack_id, $brick_id)
+    public function tryMove($from_stack_id, $to_stack_id, $brick_id, $interval)
     {
         for ($i = 0; $i < $brick_id; $i++) {
             if ($this->bricks[$i] == $to_stack_id) {
@@ -42,7 +42,7 @@ class Hanoi
         }
         $this->move($from_stack_id, $to_stack_id, $brick_id);
         $this->steps++;
-        $this->putMove($from_stack_id, $to_stack_id, $brick_id);
+        $this->putMove($from_stack_id, $to_stack_id, $brick_id, $interval);
         return true;
     }
 
@@ -59,6 +59,15 @@ class Hanoi
     public function auto()
     {
         $this->hanoi(0, 1, 2, $this->difficulty - 1);
+    }
+
+    public function repeat()
+    {
+        $this->steps = 0;
+        for ($i = 0; $i < $this->difficulty; $i++) {
+            $this->bricks[$i] = 0;
+        }
+        $this->error_message = '';
     }
 
     public function complete()
@@ -92,12 +101,13 @@ class Hanoi
         }
     }
 
-    private function putMove($from_stack_id, $to_stack_id, $brick_id)
+    private function putMove($from_stack_id, $to_stack_id, $brick_id, $interval = 0.5)
     {
         $this->moves[] = [
             'from_stack_id' => $from_stack_id + 1,
             'to_stack_id' => $to_stack_id + 1,
             'brick_id' => $brick_id + 1,
+            'interval' => $interval,
         ];
     }
 }

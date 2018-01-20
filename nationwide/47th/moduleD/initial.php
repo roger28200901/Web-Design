@@ -66,6 +66,9 @@
     $_SESSION['complete'] = false;
     $_SESSION['moves'] = json_encode([]);
     $_SESSION['auto'] = false;
+    $_SESSION['repeat'] = false;
+    $_SESSION['interval'] = 0;
+    $_SESSION['total_steps'] = 0;
 
     header('location:game.php');
     exit();

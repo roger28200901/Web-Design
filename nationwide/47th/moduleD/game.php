@@ -27,12 +27,17 @@
         $error_message = $_SESSION['error_message'];
         $complete = $_SESSION['complete'];
         $is_auto = $_SESSION['auto'];
+        $is_repeat = $_SESSION['repeat'];
+        $interval = $_SESSION['interval'];
+        $_SESSION['start_at'] = microtime(true);
     ?>
 
     <body>
         <input id="errorMessage" type="hidden" value="<?= $error_message ?>">
         <input id="complete" type="hidden" value="<?= $complete ?>">
         <input id="isAuto" type="hidden" value="<?= $is_auto ?>">
+        <input id="isRepeat" type="hidden" value="<?= $is_repeat ?>">
+        <input id="interval" type="hidden" value="<?= $interval ?>">
         <div<?= $complete ? '' : ' hidden' ?> class="success">
             <div class="container">
                 <div class="message">
@@ -103,7 +108,7 @@
                     </div>
                     <div class="mod" id="move">
                         <h4>移動次數</h4>
-                        <h2><?= $steps ?></h2>
+                        <h2 id="steps"><?= $steps ?></h2>
                     </div>
                      <div class="mod" id="asideFuncButtons">
                         <button id="undo">上一步</button>

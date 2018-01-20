@@ -43,17 +43,26 @@ window.onload = function ()
         }, interval);
     }
 
-    if (location.get('brickId')) {
+    if (0 < parseInt(document.getElementById('steps').textContent)) {
         document.getElementById('auto').style.display = 'none';
     } else {
         document.getElementById('undo').style.display = 'none';
         document.getElementById('repeat').style.display = 'none';
     }
 
-    if (document.getElementById('isAuto').value) {
-        var interval = 500;
+    var isAuto = document.getElementById('isAuto').value;
+    var isRepeat = document.getElementById('isRepeat').value;
+    if (isAuto | isRepeat) {
+        document.getElementById('auto').setAttribute('disabled', true);
+        document.getElementById('undo').setAttribute('disabled', true);
+        document.getElementById('repeat').setAttribute('disabled', true);
+        var interval = (document.getElementById('interval').value || 0.5) * 1000;
+        var url = 'auto.php';
+        if (isRepeat) {
+            url = 'repeat.php';
+        }
         setInterval(function () {
-            location.href = 'auto.php';
+            location.href = url;
         }, interval);
     }
 }

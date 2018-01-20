@@ -14,9 +14,10 @@
     $bricks = $data->bricks;
     $error_message = '';
     $moves = json_decode($_SESSION['moves']);
+    $interval = microtime(true) - $_SESSION['start_at'];
 
     $hanoi = new Hanoi($steps, $difficulty, $bricks, $moves);
-    if ($hanoi->tryMove($from_stack_id - 1, $to_stack_id - 1, $brick_id - 1)) {
+    if ($hanoi->tryMove($from_stack_id - 1, $to_stack_id - 1, $brick_id - 1, $interval)) {
         $steps = $hanoi->getsteps();
         $bricks = $hanoi->getBricks();
         $moves = $hanoi->getMoves();
