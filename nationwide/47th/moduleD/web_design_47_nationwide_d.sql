@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機: 127.0.0.1
--- 產生時間： 2018-01-20 09:54:04
+-- 產生時間： 2018-01-20 10:13:14
 -- 伺服器版本: 10.1.26-MariaDB
 -- PHP 版本： 7.1.8
 
@@ -32,7 +32,7 @@ CREATE TABLE `scores` (
   `id` int(11) NOT NULL,
   `avatar_path` text COLLATE utf8_unicode_ci NOT NULL,
   `nickname` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `steps` int(11) NOT NULL,
+  `steps` int(11) NOT NULL DEFAULT '0',
   `difficulty` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
