@@ -17,4 +17,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('account', 'AccountsController@store');
+Route::post('/account', 'AccountsController@store');
+Route::get('/account/{id}', 'AccountsController@show');

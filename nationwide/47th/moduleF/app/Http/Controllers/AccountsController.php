@@ -49,8 +49,19 @@ class AccountsController extends Controller
 
         /* Compacting data */
         $token = $account->token;
-        $data = ['data' => compact('token')];
-        return response()->view('successes.show', $data, 200)
+        $data = compact('token');
+        return response()->view('successes.show-token', $data, 200)
                          ->header('content-type', 'application/xml');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $account = Account::findOrFail($id);
     }
 }
