@@ -329,3 +329,27 @@ h2 {
     width: 60px;
     height: 60px;
 }
+
+.level-scroll {
+    border: 1px solid gray;
+    margin: 20px auto;
+    width: 80%;
+    height: 560px;
+    overflow: auto;
+}
+
+.level {
+    width: 100%;
+    border-spacing: 0;
+    text-align: center;
+}
+
+.level tr:not(:first-child):hover {
+    background-color: #ddd;
+}
+
+.level tr:first-child {
+    height: 50px;
+    background-color: gray;
+    color: white;
+}
