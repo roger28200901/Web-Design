@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -13,7 +14,6 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        //
     ];
 
     /**
@@ -48,6 +48,15 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if ($exception instanceof HttpException) {
+            /* Compacting data */
+            $message = $exception->getMessage();
+            $status_code = $exception->getStatusCode();
+            $data = compact('message', 'status_code');
+
+            return response()->view('errors.handle', $data, $status_code)
+                             ->header('content-type', 'application/xml');
+        }
         return parent::render($request, $exception);
     }
 }
