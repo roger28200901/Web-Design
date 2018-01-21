@@ -63,5 +63,9 @@ class AccountsController extends Controller
     public function show($id)
     {
         $account = Account::findOrFail($id);
+
+        $data = compact('account');
+        return response()->view('successes.show-userinfo', $data, 200)
+                         ->header('content-type', 'application/xml');
     }
 }
