@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Album extends Model
 {
+    use Traits\TokenGenerator;
+
     protected $fillable = [
-        'account_id',
         'title',
+        'description',
         'covers',
     ];
 
@@ -22,5 +24,24 @@ class Album extends Model
     public function account()
     {
         return $this->belongsTo(Account::class, 'account_id');
+    }
+
+    /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($album) {
+            /* Generating an album ID */
+            $length_of_token = rand(5, 11);
+            $album_id = $album->randomTokenWithLength($length_of_token);
+
+            /* Saving into album */
+            $album->attributes['album_id'] = $album_id;
+        });
     }
 }

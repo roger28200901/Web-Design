@@ -47,8 +47,8 @@ class AccountsController extends Controller
         $account = Account::create($data);
 
         /* Compacting data */
-        $account_id = $account->account_id;
-        $data = compact('account_id');
+        $id = $account->account_id;
+        $data = compact('id');
         return response()->view('successes.show-id', $data, 200)
                          ->header('content-type', 'application/xml');
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Account;
 
 class AlbumsController extends Controller
 {
@@ -34,7 +35,24 @@ class AlbumsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $token = '';
+        $authorizations = explode(', ', $request->header('authorization'));
+        foreach ($authorizations as $authorization) {
+            list($index, $value) = explode('=', $authorization, 2);
+            if ('token' === $index) {
+                $token = $value;
+                break;
+            }
+        }
+
+        $data = simplexml_load_string($request->getContent());
+
+        $data = json_decode(json_encode($data), true);
+        $album = Account::where('token', $token)->firstOrFail()->albums()->create($data);
+        $id = $album->album_id;
+        $data = compact('id');
+        return response()->view('successes.show-id', $data, 200)
+                         ->header('content-type', 'application/xml');
     }
 
     /**
