@@ -18,4 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('/account', 'AccountsController@store');
-Route::get('/account/{id}', 'AccountsController@show');
+Route::middleware('auth.token')->group(function () {
+    Route::get('/account/{id}', 'AccountsController@show');
+    Route::resource('/album', 'AlbumsController');
+});
