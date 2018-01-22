@@ -24,7 +24,6 @@ class AccountsController extends Controller
             abort(400, '無效的輸入資料');
         }
 
-        /*** Validating data ***/
         /* Rules of validating */
         $rules = [
             'account' => 'required|unique:accounts',
@@ -48,21 +47,24 @@ class AccountsController extends Controller
         $account = Account::create($data);
 
         /* Compacting data */
-        $token = $account->token;
-        $data = compact('token');
-        return response()->view('successes.show-token', $data, 200)
+        $account_id = $account->account_id;
+        $data = compact('account_id');
+        return response()->view('successes.show-id', $data, 200)
                          ->header('content-type', 'application/xml');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int  $account_id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($account_id)
     {
-        $account = Account::findOrFail($id);
+        $account = Account::where('account_id', $account_id)->with('albums')->firstOrFail();
+        foreach ($account->albums as $album) {
+            $album->count = $album->images->count();
+        }
 
         $data = compact('account');
         return response()->view('successes.show-userinfo', $data, 200)

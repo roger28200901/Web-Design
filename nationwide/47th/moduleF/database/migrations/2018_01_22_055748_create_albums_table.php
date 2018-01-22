@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAccountsTable extends Migration
+class CreateAlbumsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateAccountsTable extends Migration
      */
     public function up()
     {
-        Schema::create('accounts', function (Blueprint $table) {
+        Schema::create('albums', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('account_id', 11)->default('');
-            $table->string('account')->default('');
-            $table->text('bio')->nullable();
-            $table->string('token', 7)->default('');
+            $table->integer('account_id')->unsigned()->default(0);
+            $table->string('album_id', 11)->default('');
+            $table->string('title')->default('');
+            $table->text('covers')->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ class CreateAccountsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('accounts');
+        Schema::dropIfExists('albums');
     }
 }
