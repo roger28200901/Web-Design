@@ -8,6 +8,12 @@ class Image extends Model
 {
     protected $fillable = [
         'album_id',
+        'title',
+        'description',
+        'width',
+        'height',
+        'size',
+        'link',
     ];
     
     protected $table = 'images';

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Account;
+use Validator;
 
 class AlbumsController extends Controller
 {
@@ -64,8 +65,8 @@ class AlbumsController extends Controller
 
         /* Messages of Errors */
         $messages = [
-            'account.required' => '無效的輸入資料',
-            'bio.required' => '無效的輸入資料',
+            'title.required' => '無效的輸入資料',
+            'description.required' => '無效的輸入資料',
         ];
 
         /* Execute the validator */

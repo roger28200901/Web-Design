@@ -16,6 +16,13 @@ class CreateImagesTable extends Migration
         Schema::create('images', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('album_id')->unsigned()->default(0);
+            $table->string('title')->default('');
+            $table->text('description')->nullable();
+            $table->integer('width')->unsigned()->default(0);
+            $table->integer('height')->unsigned()->default(0);
+            $table->integer('size')->unsigned()->default(0);
+            $table->integer('views')->unsigned()->default(0);
+            $table->string('link')->default('');
             $table->timestamps();
         });
     }
