@@ -16,15 +16,17 @@ class AccountsController extends Controller
      */
     public function store(Request $request)
     {
+        /* Getting xml data */
         $data = simplexml_load_string($request->getContent()); // Interprets a string of XML into an object
 
         $data = json_decode(json_encode($data), true); // Converting SimpleXML object to an array
 
+        /* Checking excess data */
         if (count(array_diff_key($data, ['account' => '', 'bio' => '']))) {
             abort(400, '無效的輸入資料');
         }
 
-        /* Rules of validating */
+        /* Rules of validation */
         $rules = [
             'account' => 'required|unique:accounts',
             'bio' => 'required',

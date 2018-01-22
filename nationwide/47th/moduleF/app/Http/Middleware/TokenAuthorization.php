@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use App\Account;
+use Validator;
 
 class TokenAuthorization
 {
@@ -16,14 +17,24 @@ class TokenAuthorization
      */
     public function handle($request, Closure $next)
     {
-        /* Getting authorization data */
-        $authorizations = $request->header('authorization');
-        if ('' == $authorizations) {
-            abort(403, '拒絕存取');
+        /* Rules of validation */
+        $rules = [
+            'authorization' => 'required',
+        ];
+
+        /* Messages of Errors */
+        $messages = [
+            'authorization.required' => '拒絕存取',
+        ];
+
+        /* Execute the validator */
+        $validator = Validator::make($request->header(), $rules, $messages);
+        if ($validator->fails()) {
+            abort(403, $validator->errors()->first());
         }
 
         /* Comparing token */
-        $authorizations = explode(', ', $authorizations);
+        $authorizations = explode(', ', $request->header('authorization'));
         foreach ($authorizations as $authorization) {
             list($index, $value) = explode('=', $authorization, 2);
             if ('token' === $index) {

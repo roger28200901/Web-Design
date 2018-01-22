@@ -35,6 +35,7 @@ class AlbumsController extends Controller
      */
     public function store(Request $request)
     {
+        /* Getting token */
         $token = '';
         $authorizations = explode(', ', $request->header('authorization'));
         foreach ($authorizations as $authorization) {
@@ -45,9 +46,34 @@ class AlbumsController extends Controller
             }
         }
 
+        /* Getting xml data */
         $data = simplexml_load_string($request->getContent());
 
         $data = json_decode(json_encode($data), true);
+
+        /* Checking excess data */
+        if (count(array_diff_key($data, ['title' => '', 'description' => '']))) {
+            abort(400, '無效的輸入資料');
+        }
+
+        /* Rules of validation */
+        $rules = [
+            'title' => 'required',
+            'description' => 'required',
+        ];
+
+        /* Messages of Errors */
+        $messages = [
+            'account.required' => '無效的輸入資料',
+            'bio.required' => '無效的輸入資料',
+        ];
+
+        /* Execute the validator */
+        $validator = Validator::make($data, $rules, $messages);
+        if ($validator->fails()) {
+            abort(400, $validator->errors()->first());
+        }
+
         $album = Account::where('token', $token)->firstOrFail()->albums()->create($data);
         $id = $album->album_id;
         $data = compact('id');
