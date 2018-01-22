@@ -18,6 +18,7 @@ class CreateAlbumsTable extends Migration
             $table->integer('account_id')->unsigned()->default(0);
             $table->string('album_id', 11)->default('');
             $table->string('title')->default('');
+            $table->text('discription')->nullable();
             $table->text('covers')->nullable();
             $table->timestamps();
         });
