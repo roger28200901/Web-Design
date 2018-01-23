@@ -83,9 +83,9 @@ class ImagesController extends Controller
         $image = Album::where('album_id', $album_id)->firstOrFail()->images()->create($data);
 
         /* Compacting data */
-        $datetime = $image->created_at->timestamp;
-        $data = ['data' => compact('datetime', 'width', 'height', 'size')];
-        return response()->view('successes.show-imageinfo', $data, 200)
+        $id = $image->image_id;
+        $data = compact('id');
+        return response()->view('successes.show-id', $data, 200)
                          ->header('content-type', 'application/xml');
     }
 
