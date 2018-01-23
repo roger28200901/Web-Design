@@ -46,14 +46,12 @@ class ImagesController extends Controller
         /* Rules of validation */
         $rules = [
             'title' => 'required',
-            'description' => 'required',
             'image' => 'required|image',
         ];
 
         /* Messages of errors */
         $messages = [
             'title.required' => '無效的輸入資料',
-            'description.required' => '無效的輸入資料',
             'image.required' => '無效的輸入資料',
             'image.image' => '無效的輸入資料',
         ];

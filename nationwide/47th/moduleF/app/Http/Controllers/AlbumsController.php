@@ -61,13 +61,11 @@ class AlbumsController extends Controller
         /* Rules of validation */
         $rules = [
             'title' => 'required',
-            'description' => 'required',
         ];
 
         /* Messages of errors */
         $messages = [
             'title.required' => '無效的輸入資料',
-            'description.required' => '無效的輸入資料',
         ];
 
         /* Execute the validator */
