@@ -65,10 +65,10 @@ class ImagesController extends Controller
         }
 
         /* Storing into storage */
-        $path = $request->image->store('public/images');
+        $path = $request->image->store('/', 'upload');
 
         /* Getting image info */
-        $link = url(Storage::url("app/$path"));
+        $link = url("/i/$path");
         list($width, $height) = getimagesize($link); // Getting width and height of image
         $size = $request->image->getClientSize(); // Getting size of image
         $image_info = [

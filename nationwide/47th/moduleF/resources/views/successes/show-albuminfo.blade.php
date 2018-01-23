@@ -19,6 +19,18 @@
                         <description/>
                     @endif
                     <datetime>{{ $image->created_at->timestamp }}</datetime>
+                    @if ($image->covers)
+                        @php
+                            $covers = json_decode($image->covers);
+                        @endphp
+                        <covers>
+                            @foreach ($covers as $cover)
+                                <cover>{{ $cover }}</cover>
+                            @endforeach
+                        </covers>
+                    @else
+                        <covers/>
+                    @endif
                     <width>{{ $image->width }}</width>
                     <height>{{ $image->height }}</height>
                     <size>{{ $image->size }}</size>
