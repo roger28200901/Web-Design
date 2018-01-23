@@ -36,11 +36,11 @@ class Image extends Model
 
         static::creating(function ($image) {
             /* Generating an image ID */
-            $length_of_image_id = rand(5, 11);
+            $length_of_image_id = 10;
             $image_id = $image->randomTokenWithLength($length_of_image_id);
 
             /* Saving into image */
-            $album->attributes['image_id'] = $image_id;
+            $image->attributes['image_id'] = $image_id;
         });
     }
 }
