@@ -22,7 +22,7 @@ class TokenAuthorization
             'authorization' => 'required',
         ];
 
-        /* Messages of Errors */
+        /* Messages of errors */
         $messages = [
             'authorization.required' => '拒絕存取',
         ];

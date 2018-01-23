@@ -32,7 +32,7 @@ class AccountsController extends Controller
             'bio' => 'required',
         ];
 
-        /* Messages of Errors */
+        /* Messages of errors */
         $messages = [
             'account.required' => '無效的輸入資料',
             'account.unique' => '此帳號已經被註冊',

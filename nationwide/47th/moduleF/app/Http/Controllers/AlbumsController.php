@@ -63,7 +63,7 @@ class AlbumsController extends Controller
             'description' => 'required',
         ];
 
-        /* Messages of Errors */
+        /* Messages of errors */
         $messages = [
             'title.required' => '無效的輸入資料',
             'description.required' => '無效的輸入資料',
