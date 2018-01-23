@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Account;
+use App\Album;
 use Validator;
 
 class AlbumsController extends Controller
@@ -85,12 +86,17 @@ class AlbumsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int  $album_id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($album_id)
     {
-        //
+        $album = Album::where('album_id', $album_id)->with(['account', 'images'])->firstOrFail();
+        $album->images_count = $album->images->count();
+        $album->link = url()->current();
+        $data = compact('album');
+        return response()->view('successes.show-albuminfo', $data, 200)
+                         ->header('content-type', 'application/xml');
     }
 
     /**

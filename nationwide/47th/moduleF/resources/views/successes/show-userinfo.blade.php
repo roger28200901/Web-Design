@@ -9,5 +9,7 @@
                 <album id="{{ $album->album_id }}" count="{{ $album->count }}"/>
             @endforeach
         </albums>
+    @else
+        <albums/>
     @endif
 </data>

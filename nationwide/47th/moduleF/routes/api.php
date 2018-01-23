@@ -18,9 +18,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('/account', 'AccountsController@store');
+
+Route::get('/album/{id}', 'AlbumsController@show');
+
 Route::middleware('auth.token')->group(function () {
+
     Route::get('/account/{id}', 'AccountsController@show');
+
     Route::post('/album/{id}/image', 'ImagesController@store');
 
-    Route::resource('/album', 'AlbumsController');
+    Route::resource('/album', 'AlbumsController', ['except' => 'show']);
+
 });
