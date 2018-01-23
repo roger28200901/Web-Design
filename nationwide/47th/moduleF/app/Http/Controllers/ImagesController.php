@@ -63,7 +63,7 @@ class ImagesController extends Controller
         }
 
         /* Storing into storage */
-        $path = $request->image->store('/', 'upload');
+        $path = $request->image->storeAs('/', md5(uniqid(rand())) . '.jpg', 'upload');
 
         /* Getting image info */
         $link = url("/i/$path");
