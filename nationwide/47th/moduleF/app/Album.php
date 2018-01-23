@@ -37,8 +37,8 @@ class Album extends Model
 
         static::creating(function ($album) {
             /* Generating an album ID */
-            $length_of_token = rand(5, 11);
-            $album_id = $album->randomTokenWithLength($length_of_token);
+            $length_of_album_id = rand(5, 11);
+            $album_id = $album->randomTokenWithLength($length_of_album_id);
 
             /* Saving into album */
             $album->attributes['album_id'] = $album_id;
