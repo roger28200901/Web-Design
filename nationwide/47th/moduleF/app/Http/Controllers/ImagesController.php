@@ -90,12 +90,16 @@ class ImagesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int  $album_id
+     * @param  int  $image_id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($album_id, $image_id)
     {
-        //
+        $image = Album::where('album_id', $album_id)->firstOrFail()->images()->where('image_id', $image_id)->firstOrFail();
+        $data = compact('image');
+        return response()->view('successes.show-imageinfo', $data, 200)
+                         ->header('content-type', 'application/xml');
     }
 
     /**
