@@ -58,7 +58,7 @@ class AccountsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $account_id
+     * @param  string  $account_id
      * @return \Illuminate\Http\Response
      */
     public function show($account_id)

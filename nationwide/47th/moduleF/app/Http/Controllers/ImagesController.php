@@ -32,7 +32,7 @@ class ImagesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  int $album_id
+     * @param  string $album_id
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */

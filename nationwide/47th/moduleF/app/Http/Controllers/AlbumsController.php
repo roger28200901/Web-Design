@@ -22,6 +22,7 @@ class AlbumsController extends Controller
     /**
      * Display a latest of the resource.
      *
+     * @param  string  $album_id
      * @return \Illuminate\Http\Response
      */
     public function latest($album_id)
@@ -42,6 +43,7 @@ class AlbumsController extends Controller
     /**
      * Display a most view times of the resource.
      *
+     * @param  string  $album_id
      * @return \Illuminate\Http\Response
      */
     public function hot($album_id)
@@ -127,7 +129,7 @@ class AlbumsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $album_id
+     * @param  string  $album_id
      * @return \Illuminate\Http\Response
      */
     public function show($album_id)
@@ -155,21 +157,39 @@ class AlbumsController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  string  $album_id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $album_id)
     {
-        //
+        /* Getting xml data */
+        $data = simplexml_load_string($request->getContent());
+
+        $data = json_decode(json_encode($data), true);
+
+        /* Checking excess data */
+        if (count(array_diff_key($data, ['title' => '', 'description' => '', 'covers' => '']))) {
+            abort(400, '無效的輸入資料');
+        }
+
+        /* Converting covers */
+        if (isset($data['covers'])) {
+            $data['covers'] = json_encode($data['covers']);
+        }
+
+        /* Storing model */
+        Album::where('album_id', $album_id)->update($data);
+        return response()->view('successes.show-id', [], 200)
+                         ->header('content-type', 'application/xml');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  string  $album_id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($album_id)
     {
         //
     }

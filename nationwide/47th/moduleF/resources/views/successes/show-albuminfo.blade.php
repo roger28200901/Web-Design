@@ -4,6 +4,18 @@
     <title>{{ $album->title }}</title>
     <description>{{ $album->description }}</description>
     <datetime>{{ $album->created_at->timestamp }}</datetime>
+    @if ($album->covers)
+        @php
+            $covers = json_decode($album->covers)->cover;
+        @endphp
+        <covers>
+            @foreach ($covers as $cover)
+                <cover>{{ $cover }}</cover>
+            @endforeach
+        </covers>
+    @else
+        <covers/>
+    @endif
     <account>{{ $album->account->account_id }}</account>
     <link>{{ $album->link }}</link>
     <images_count>{{ $album->images_count }}</images_count>
@@ -19,18 +31,6 @@
                         <description/>
                     @endif
                     <datetime>{{ $image->created_at->timestamp }}</datetime>
-                    @if ($image->covers)
-                        @php
-                            $covers = json_decode($image->covers);
-                        @endphp
-                        <covers>
-                            @foreach ($covers as $cover)
-                                <cover>{{ $cover }}</cover>
-                            @endforeach
-                        </covers>
-                    @else
-                        <covers/>
-                    @endif
                     <width>{{ $image->width }}</width>
                     <height>{{ $image->height }}</height>
                     <size>{{ $image->size }}</size>
