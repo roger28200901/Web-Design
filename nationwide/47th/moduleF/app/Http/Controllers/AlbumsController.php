@@ -20,6 +20,46 @@ class AlbumsController extends Controller
     }
 
     /**
+     * Display a latest of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function latest($album_id)
+    {
+        /* Getting latest 3 images */
+        $album = Album::where('album_id', $album_id)->with(['images' => function ($query) {
+            $query->orderBy('created_at', 'desc')->take(3);
+        }])->firstOrFail();
+
+        /* Compacting data */
+        $data = compact('album');
+        $album->link = url("/album/$album_id");
+        $album->images_count = $album->images->count();
+        return response()->view('successes.show-images', $data, 200)
+                         ->header('content-type', 'application/xml');
+    }
+
+    /**
+     * Display a most view times of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function hot($album_id)
+    {
+        /* Getting 3 most view times images */
+        $album = Album::where('album_id', $album_id)->with(['images' => function ($query) {
+            $query->orderBy('views', 'desc')->take(3);
+        }])->firstOrFail();
+
+        /* Compacting data */
+        $data = compact('album');
+        $album->link = url("/album/$album_id");
+        $album->images_count = $album->images->count();
+        return response()->view('successes.show-images', $data, 200)
+                         ->header('content-type', 'application/xml');
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -74,7 +114,10 @@ class AlbumsController extends Controller
             abort(400, $validator->errors()->first());
         }
 
+        /* Storing model */
         $album = Account::where('token', $token)->firstOrFail()->albums()->create($data);
+
+        /* Compacting data */
         $id = $album->album_id;
         $data = compact('id');
         return response()->view('successes.show-id', $data, 200)

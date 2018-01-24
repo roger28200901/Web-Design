@@ -23,6 +23,8 @@ Route::get('/album/{albumID}', 'AlbumsController@show');
 
 Route::get('/album/{albumID}/latest', 'AlbumsController@latest');
 
+Route::get('/album/{albumID}/hot', 'AlbumsController@hot');
+
 Route::middleware('auth.token')->group(function () {
 
     Route::get('/account/{accountID}', 'AccountsController@show');
