@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Album;
+use App\Image;
 use Validator;
 use Storage;
 
@@ -36,7 +37,7 @@ class ImagesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store($album_id, Request $request)
+    public function store(Request $request, $album_id)
     {
         /* Checking excess data */
         if (count(array_diff_key($request->all(), ['title' => '', 'description' => '', 'image' => '']))) {
@@ -117,22 +118,70 @@ class ImagesController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  string  $album_id
+     * @param  string  $image_id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $album_id, $image_id)
     {
-        //
+        /* Checking excess data */
+        if (count(array_diff_key($request->all(), ['title' => '', 'description' => '', 'image' => '']))) {
+            abort(400, '無效的輸入資料');
+        }
+
+        /* Rules of validation */
+        $rules = [
+            'image' => 'required|image',
+        ];
+
+        /* Messages of errors */
+        $messages = [
+            'image.required' => '無效的輸入資料',
+            'image.image' => '無效的輸入資料',
+        ];
+
+        /* Execute the validator */
+        $validator = Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()) {
+            abort(400, $validator->errors()->first());
+        }
+
+        /* Storing into storage */
+        $path = $request->image->storeAs('/', md5(uniqid(rand())) . '.jpg', 'upload');
+
+        /* Getting image info */
+        $link = url("/i/$path");
+        list($width, $height) = getimagesize($link); // Getting width and height of image
+        $size = $request->image->getClientSize(); // Getting size of image
+        $image_info = [
+            'width' => $width,
+            'height' => $height,
+            'size' => $size,
+            'link' => $link,
+        ];
+
+        /* Storing model */
+        $data = array_merge($request->except('image'), $image_info);
+        $image = Image::where('image_id', $image_id)->firstOrFail()->update($data);
+
+        /* Compacting data */
+        $id = $image->image_id;
+        $data = compact('id');
+        return response()->view('successes.show-id', $data, 200)
+                         ->header('content-type', 'application/xml');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  string  $album_id
+     * @param  string  $image_id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($album_id, $image_id)
     {
-        //
+        Image::where('image_id', $image_id)->delete();
+        return response()->view('successes.show-id', [], 200)
+                         ->header('content-type', 'application/xml');
     }
 }

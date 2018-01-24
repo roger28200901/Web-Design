@@ -27,11 +27,15 @@ Route::get('/album/{albumID}/hot', 'AlbumsController@hot');
 
 Route::get('/album/{albumID}/images/{imageID}', 'ImagesController@show');
 
+Route::delete('/album/{albumID}/images/{imageID}', 'ImagesController@destroy');
+
 Route::middleware('auth.token')->group(function () {
 
     Route::get('/account/{accountID}', 'AccountsController@show');
 
     Route::post('/album/{accountID}/image', 'ImagesController@store');
+
+    Route::patch('/album/{albumID}/images/{imageID}', 'ImagesController@update');
 
     Route::resource('/album', 'AlbumsController', ['except' => 'show']);
 
