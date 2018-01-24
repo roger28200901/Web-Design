@@ -43,5 +43,9 @@ class Album extends Model
             /* Saving into album */
             $album->attributes['album_id'] = $album_id;
         });
+
+        static::deleting(function ($album) {
+            $album->images()->delete();
+        });
     }
 }

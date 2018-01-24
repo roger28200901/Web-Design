@@ -191,6 +191,8 @@ class AlbumsController extends Controller
      */
     public function destroy($album_id)
     {
-        //
+        Album::where('album_id', $album_id)->firstOrFail()->delete();
+        return response()->view('successes.show-id', [], 200)
+                         ->header('content-type', 'application/xml');
     }
 }
