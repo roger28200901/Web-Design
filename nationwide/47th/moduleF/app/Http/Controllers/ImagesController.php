@@ -141,6 +141,12 @@ class ImagesController extends Controller
                          ->header('content-type', 'application/xml');
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \Illuminate\Http\UploadedFile $image
+     * @return string $filename
+     */
     private function storeImage($image)
     {
         switch ($image->getMimeType()) {
