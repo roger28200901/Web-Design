@@ -149,6 +149,7 @@ class ImagesController extends Controller
      */
     private function storeImage($image)
     {
+        /* Create image from type */
         switch ($image->getMimeType()) {
             case 'image/png':
                 $image_original = imagecreatefrompng($image);
@@ -160,9 +161,12 @@ class ImagesController extends Controller
                 $image_original = imagecreatefromjpeg($image);
                 break;
         }
+
+        /* Storing */
         $filename = md5(uniqid(rand())) . '.jpg';
         $quality = 40;
         imagejpeg($image_original, base_path("images/$filename"), $quality);
+
         return $filename;
     }
 }
