@@ -49,7 +49,6 @@ class Album extends Model
             $images = $album->images;
             foreach ($images as $image) {
                 Storage::disk('upload')->delete($image->filename);
-                dd($image->filename);
                 $image->forceDelete();
             }
         });
