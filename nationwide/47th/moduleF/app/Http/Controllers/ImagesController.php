@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Album;
 use App\Image;
 use Validator;
-use Storage;
 
 class ImagesController extends Controller
 {
@@ -102,6 +101,81 @@ class ImagesController extends Controller
         $data = compact('image');
         return response()->view('successes.show-imageinfo', $data, 200)
                          ->header('content-type', 'application/xml');
+    }
+
+
+    /**
+     * Display the specified resource as image/jpeg.
+     *
+     * @param  int  $image_id
+     * @param  int  $image_suffix
+     * @return \Illuminate\Http\Response
+     */
+    public function image($image_id, $image_suffix)
+    {
+        /* Getting image */
+        if (!$image = Image::where('image_id', $image_id)->first()) {
+            $image_id = $image_id . $image_suffix;
+            $image_suffix = '';
+            $image = Image::where('image_id', $image_id)->firstOrFail();
+        }
+
+        /* Reconizing suffix */
+        if (!in_array($image_suffix, ['', 'l', 'm', 's', 't'])) {
+            abort(400, '無效的輸入資料');
+        }
+
+        /* Creating image */
+        $path = base_path('images/' . $image->filename);
+        $image_original = imagecreatefromjpeg($path);
+
+        $image_original_width = imagesx($image_original);
+        $image_original_height = imagesy($image_original);
+        switch($image_suffix) {
+            case 'l':
+                $image_resized_width = min(960, $image_original_width);
+                $image_resized_height = min(960, $image_original_height);
+                break;
+            case 'm':
+                $image_resized_width = min(320, $image_original_width);
+                $image_resized_height = min(320, $image_original_height);
+                break;
+            case 's':
+                $image_resized_width = min(90, $image_original_width);
+                $image_resized_height = min(90, $image_original_height);
+                break;
+            case 't':
+                $image_resized_width = 50;
+                $image_resized_height = 50;
+                break;
+            default:
+                $image_resized_width = $image_original_width;
+                $image_resized_height = $image_original_height;
+                break;
+        }
+
+        if ('t' != $image_suffix && ($image_resized_width != $image_original_height ||
+            $image_resized_height != $image_original_height)) {
+            if ($image_original_width > $image_original_height) {
+                $resize_ratio = $image_resized_width / $image_original_width;
+                $image_resized_height = ceil($image_original_height * $resize_ratio);
+            } else {
+                $resize_ratio = $image_resized_height / $image_original_height;
+                $image_resized_width = ceil($image_original_width * $resize_ratio);
+            }
+        }
+
+        $image_resized = imagecreatetruecolor($image_resized_width, $image_resized_height);
+
+        imagecopyresampled($image_resized, $image_original, 0, 0, 0, 0,
+                         $image_resized_width,
+                         $image_resized_height,
+                         $image_original_width,
+                         $image_original_height);
+        header('content-type:image/jpeg');
+        imagepng($image_resized);
+        imagedestroy($image_resized);
+        imagedestroy($image_original);
     }
 
     /**

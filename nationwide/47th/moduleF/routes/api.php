@@ -29,6 +29,8 @@ Route::get('/album/{albumID}/images/{imageID}', 'ImagesController@show');
 
 Route::delete('/album/{albumID}/images/{imageID}', 'ImagesController@destroy');
 
+Route::get('/i/{imageID}{imageSuffix}.jpg', 'ImagesController@image');
+
 Route::middleware('auth.token')->group(function () {
 
     Route::get('/account/{accountID}', 'AccountsController@show');
