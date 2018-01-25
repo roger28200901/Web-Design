@@ -68,8 +68,8 @@ class ImagesController extends Controller
 
         /* Getting image info */
         $link = url("/i/$filename");
-        list($width, $height) = getimagesize(base_path("images\\$filename")); // Getting width and height of image
-        $size = $request->image->getClientSize(); // Getting size of image
+        list($width, $height) = getimagesize(base_path("images/$filename")); // Getting width and height of image
+        $size = filesize(base_path("images/$filename")); // Getting size of image
         $image_info = [
             'filename' => $filename,
             'width' => $width,
@@ -161,7 +161,8 @@ class ImagesController extends Controller
                 break;
         }
         $filename = md5(uniqid(rand())) . '.jpg';
-        imagejpeg($image_original, "images/$filename");
+        $quality = 40;
+        imagejpeg($image_original, base_path("images/$filename"), $quality);
         return $filename;
     }
 }
