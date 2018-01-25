@@ -129,6 +129,7 @@ class ImagesController extends Controller
         $path = base_path('images/' . $image->filename);
         $image_original = imagecreatefromjpeg($path);
 
+        /* Calculating image size */
         $image_original_width = imagesx($image_original);
         $image_original_height = imagesy($image_original);
         switch($image_suffix) {
@@ -154,8 +155,7 @@ class ImagesController extends Controller
                 break;
         }
 
-        if ('t' != $image_suffix && ($image_resized_width != $image_original_height ||
-            $image_resized_height != $image_original_height)) {
+        if ('t' != $image_suffix && ($image_resized_width != $image_original_height || $image_resized_height != $image_original_height)) {
             if ($image_original_width > $image_original_height) {
                 $resize_ratio = $image_resized_width / $image_original_width;
                 $image_resized_height = ceil($image_original_height * $resize_ratio);
@@ -165,14 +165,15 @@ class ImagesController extends Controller
             }
         }
 
+        /* Creating image resized */
         $image_resized = imagecreatetruecolor($image_resized_width, $image_resized_height);
-
         imagecopyresampled($image_resized, $image_original, 0, 0, 0, 0,
                          $image_resized_width,
                          $image_resized_height,
                          $image_original_width,
                          $image_original_height);
 
+        /* Reading to buffer */
         ob_start();
             imagejpeg($image_resized);
             $jpeg_file_content = ob_get_contents();
