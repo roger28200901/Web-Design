@@ -180,7 +180,7 @@ class ImagesController extends Controller
      */
     public function destroy($album_id, $image_id)
     {
-        Image::where('image_id', $image_id)->delete();
+        Image::where('image_id', $image_id)->firstOrFail()->delete();
         return response()->view('successes.show-id', [], 200)
                          ->header('content-type', 'application/xml');
     }
