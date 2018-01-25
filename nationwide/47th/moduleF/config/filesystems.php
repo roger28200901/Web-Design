@@ -45,7 +45,7 @@ return [
 
         'upload' => [
             'driver' => 'local',
-            'root' => '.\\i',
+            'root' => '.\\images',
         ],
 
         'local' => [

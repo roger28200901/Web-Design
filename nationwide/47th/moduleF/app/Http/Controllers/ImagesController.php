@@ -64,13 +64,15 @@ class ImagesController extends Controller
         }
 
         /* Storing into storage */
-        $path = $request->image->storeAs('/', md5(uniqid(rand())) . '.jpg', 'upload');
+        $filename = md5(uniqid(rand())) . '.jpg';
+        $request->image->storeAs('/', $filename, 'upload');
 
         /* Getting image info */
-        $link = url("/i/$path");
-        list($width, $height) = getimagesize($link); // Getting width and height of image
+        $link = url("/i/$filename");
+        list($width, $height) = getimagesize(base_path("images\\$filename")); // Getting width and height of image
         $size = $request->image->getClientSize(); // Getting size of image
         $image_info = [
+            'filename' => $filename,
             'width' => $width,
             'height' => $height,
             'size' => $size,

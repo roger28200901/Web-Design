@@ -3,13 +3,17 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Image extends Model
 {
     use Traits\TokenGenerator;
 
+    use SoftDeletes;
+
     protected $fillable = [
         'album_id',
+        'filename',
         'title',
         'description',
         'width',
@@ -17,7 +21,7 @@ class Image extends Model
         'size',
         'link',
     ];
-    
+
     protected $table = 'images';
 
     public function album()

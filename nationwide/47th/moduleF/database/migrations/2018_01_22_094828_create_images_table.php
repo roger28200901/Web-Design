@@ -17,6 +17,7 @@ class CreateImagesTable extends Migration
             $table->increments('id');
             $table->integer('album_id')->unsigned()->default(0);
             $table->string('image_id', 11)->default('');
+            $table->string('filename')->default('');
             $table->string('title')->default('');
             $table->text('description')->nullable();
             $table->integer('width')->unsigned()->default(0);
@@ -25,6 +26,7 @@ class CreateImagesTable extends Migration
             $table->integer('views')->unsigned()->default(0);
             $table->string('link')->default('');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

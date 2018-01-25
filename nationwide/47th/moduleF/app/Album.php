@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Storage;
 
 class Album extends Model
 {
@@ -45,7 +46,12 @@ class Album extends Model
         });
 
         static::deleting(function ($album) {
-            $album->images()->delete();
+            $images = $album->images;
+            foreach ($images as $image) {
+                Storage::disk('upload')->delete($image->filename);
+                dd($image->filename);
+                $image->forceDelete();
+            }
         });
     }
 }
