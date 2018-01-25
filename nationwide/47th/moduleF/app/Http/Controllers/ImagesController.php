@@ -172,10 +172,15 @@ class ImagesController extends Controller
                          $image_resized_height,
                          $image_original_width,
                          $image_original_height);
-        header('content-type:image/jpeg');
-        imagepng($image_resized);
-        imagedestroy($image_resized);
-        imagedestroy($image_original);
+
+        ob_start();
+            imagejpeg($image_resized);
+            $jpeg_file_content = ob_get_contents();
+            imagedestroy($image_resized);
+            imagedestroy($image_original);
+        ob_end_clean();
+
+        return response($jpeg_file_content)->header('content-type', 'image/jpeg');
     }
 
     /**
