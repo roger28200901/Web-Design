@@ -31,6 +31,8 @@ Route::delete('/album/{albumID}/images/{imageID}', 'ImagesController@destroy');
 
 Route::get('/i/{imageID}{imageSuffix}.jpg', 'ImagesController@image');
 
+Route::get('/album/{albumID}/cover.jpg', 'AlbumsController@cover');
+
 Route::middleware('auth.token')->group(function () {
 
     Route::get('/account/{accountID}', 'AccountsController@show');
@@ -38,6 +40,8 @@ Route::middleware('auth.token')->group(function () {
     Route::post('/album/{accountID}/image', 'ImagesController@store');
 
     Route::patch('/album/{albumID}/images/{imageID}', 'ImagesController@update');
+
+    Route::post('/internal/move-image', 'ImagesController@move');
 
     Route::resource('/album', 'AlbumsController', ['except' => 'show']);
 

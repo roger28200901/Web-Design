@@ -205,8 +205,20 @@ class ImagesController extends Controller
      */
     public function update(Request $request, $album_id, $image_id)
     {
+        //
     }
 
+    /**
+     * Move the specified resource to another album.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function move(Request $request)
+    {
+        //
+    }
+    
     /**
      * Remove the specified resource from storage.
      *

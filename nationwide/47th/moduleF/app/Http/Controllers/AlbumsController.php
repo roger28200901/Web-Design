@@ -143,6 +143,17 @@ class AlbumsController extends Controller
     }
 
     /**
+     * Display album cover.
+     *
+     * @param  string  $album_id
+     * @return \Illuminate\Http\Response
+     */
+    public function cover($album_id)
+    {
+        //
+    }
+
+    /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
