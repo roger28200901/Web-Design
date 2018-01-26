@@ -150,7 +150,42 @@ class AlbumsController extends Controller
      */
     public function cover($album_id)
     {
-        //
+        $album = Album::where('album_id', $album_id)->firstOrFail();
+        $covers = $album->getCovers();
+
+        /* Creating cover image */
+        $image_result = imagecreatetruecolor(960, 960);
+        switch (count($covers)) {
+            case 1:
+                $image_original_first = imagecreatefromjpeg(base_path('images/' . $covers[0]->filename));
+                imagecopyresampled($image_result, $image_original_first, 0, 0, 0, 0, 960, 960, $covers[0]->width, $covers[0]->height);
+                break;
+            case 2:
+                $image_original_first = imagecreatefromjpeg(base_path('images/' . $covers[0]->filename));
+                imagecopyresampled($image_result, $image_original_first, 0, 0, 0, 0, 480, 960, $covers[0]->width, $covers[0]->height);
+                $image_original_second = imagecreatefromjpeg(base_path('images/' . $covers[1]->filename));
+                imagecopyresampled($image_result, $image_original_second, 480, 0, 0, 0, 480, 960, $covers[1]->width, $covers[1]->height);
+                break;
+            case 3:
+                $image_original_first = imagecreatefromjpeg(base_path('images/' . $covers[0]->filename));
+                imagecopyresampled($image_result, $image_original_first, 0, 0, 0, 0, 960, 480, $covers[0]->width, $covers[0]->height);
+                $image_original_second = imagecreatefromjpeg(base_path('images/' . $covers[1]->filename));
+                imagecopyresampled($image_result, $image_original_second, 0, 480, 0, 0, 480, 480, $covers[1]->width, $covers[1]->height);
+                $image_original_third = imagecreatefromjpeg(base_path('images/' . $covers[2]->filename));
+                imagecopyresampled($image_result, $image_original_third, 480, 480, 0, 0, 480, 480, $covers[2]->width, $covers[2]->height);
+                break;
+            default:
+                break;
+        }
+
+        /* Reading to buffer */
+        ob_start();
+            imagejpeg($image_result);
+            $jpeg_file_content = ob_get_contents();
+            imagedestroy($image_result);
+        ob_end_clean();
+
+        return response($jpeg_file_content, 200)->header('content-type', 'image/jpeg');
     }
 
     /**
@@ -185,7 +220,11 @@ class AlbumsController extends Controller
 
         /* Converting covers */
         if (isset($data['covers'])) {
-            $data['covers'] = json_encode($data['covers']);
+            if (1 < count($data['covers']['cover'])) {
+                $data['covers'] = json_encode($data['covers']);
+            } else {
+                $data['covers'] = json_encode(['cover' => [$data['covers']['cover']]]);
+            }
         }
 
         /* Storing model */

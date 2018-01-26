@@ -181,7 +181,7 @@ class ImagesController extends Controller
             imagedestroy($image_original);
         ob_end_clean();
 
-        return response($jpeg_file_content)->header('content-type', 'image/jpeg');
+        return response($jpeg_file_content, 200)->header('content-type', 'image/jpeg');
     }
 
     /**

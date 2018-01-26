@@ -27,6 +27,12 @@ class Album extends Model
         return $this->belongsTo(Account::class, 'account_id');
     }
 
+    public function getCovers()
+    {
+        $covers = json_decode($this->covers)->cover;
+        return $this->images()->whereIn('image_id', $covers)->get();
+    }
+
     /**
      * The "booting" method of the model.
      *
