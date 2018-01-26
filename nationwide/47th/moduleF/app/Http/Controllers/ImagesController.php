@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Account;
 use App\Album;
 use App\Image;
 use Validator;
@@ -216,7 +217,51 @@ class ImagesController extends Controller
      */
     public function move(Request $request)
     {
-        //
+        /* Getting xml data */
+        $data = simplexml_load_string($request->getContent());
+
+        $data = json_decode(json_encode($data), true);
+
+
+        /* Checking excess data */
+        if (count(array_diff_key($data, ['src_image' => '', 'dst_album' => '']))) {
+            abort(400, '無效的輸入資料');
+        }
+
+        /* Getting token */
+        $token = '';
+        $authorizations = explode(', ', $request->header('authorization'));
+        foreach ($authorizations as $authorization) {
+            list($index, $value) = explode('=', $authorization, 2);
+            if ('token' === $index) {
+                $token = $value;
+                break;
+            }
+        }
+
+        $account = Account::where('token', $token)->firstOrFail();
+
+        /* Checking album isvalid */
+        $album_destination = $account->albums()->where('album_id', $data['dst_album'])->firstOrFail();
+
+        /* Checking image isvalid */
+        $is_valid = false;
+        foreach ($account->albums as $album) {
+            if ($image = $album->images()->where('image_id', $data['src_image'])->first()) {
+                $is_valid = true;
+                break;
+            }
+        }
+
+        if (!$is_valid) {
+            abort(404, '無效的輸入資料');
+        }
+
+        /* Moving to destination album */
+        $image->update(['album_id' => $album_destination->id]);
+
+        return response()->view('successes.show-id', [], 200)
+                         ->header('content-type', 'application/xml');
     }
     
     /**
