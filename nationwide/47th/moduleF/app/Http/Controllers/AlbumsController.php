@@ -229,8 +229,8 @@ class AlbumsController extends Controller
 
         /* Storing model */
         Album::where('album_id', $album_id)->update($data);
-        $status_code = 204;
-        $data = compact($status_code);
+        $status_code = 200;
+        $data = compact('status_code');
         return response()->view('successes.show-status', $data, 200)
                          ->header('content-type', 'application/xml');
     }
@@ -244,8 +244,8 @@ class AlbumsController extends Controller
     public function destroy($album_id)
     {
         Album::where('album_id', $album_id)->firstOrFail()->delete();
-        $status_code = 204;
-        $data = compact($status_code);
+        $status_code = 200;
+        $data = compact('status_code');
         return response()->view('successes.show-status', $data, 200)
                          ->header('content-type', 'application/xml');
     }

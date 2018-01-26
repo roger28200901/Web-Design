@@ -46,5 +46,15 @@ class Image extends Model
             /* Saving into image */
             $image->attributes['image_id'] = $image_id;
         });
+
+        static::deleting(function ($image) {
+            /* Generating an delete token */
+            $length_of_delete_token = 16;
+            $delete_token = $image->randomTokenWithLength($length_of_delete_token);
+
+            /* Saving into image */
+            $image->delete_token = $delete_token; // Deleting event will ignore attributes
+            $image->save();
+        });
     }
 }
