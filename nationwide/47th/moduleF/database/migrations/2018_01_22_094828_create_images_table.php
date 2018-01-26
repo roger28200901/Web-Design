@@ -17,15 +17,16 @@ class CreateImagesTable extends Migration
             $table->increments('id');
             $table->integer('album_id')->unsigned()->default(0);
             $table->string('image_id', 11)->default('');
-            $table->string('filename')->default('');
-            $table->string('title')->default('');
+            $table->string('filename', 255)->default('');
+            $table->string('title', 255)->default('');
             $table->text('description')->nullable();
             $table->integer('width')->unsigned()->default(0);
             $table->integer('height')->unsigned()->default(0);
             $table->integer('size')->unsigned()->default(0);
             $table->integer('views')->unsigned()->default(0);
-            $table->string('link')->default('');
+            $table->string('link', 255)->default('');
             $table->timestamps();
+            $table->string('delete_token', 16)->default('');
             $table->softDeletes();
         });
     }
