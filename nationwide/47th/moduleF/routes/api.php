@@ -43,6 +43,8 @@ Route::middleware('auth.token')->group(function () {
 
     Route::post('/internal/move-image', 'ImagesController@move');
 
+    Route::post('/internal/undelete-image', 'ImagesController@undelete');
+
     Route::resource('/album', 'AlbumsController', ['except' => 'show']);
 
 });

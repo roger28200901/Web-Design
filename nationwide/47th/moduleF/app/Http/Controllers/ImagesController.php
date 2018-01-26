@@ -222,7 +222,6 @@ class ImagesController extends Controller
 
         $data = json_decode(json_encode($data), true);
 
-
         /* Checking excess data */
         if (count(array_diff_key($data, ['src_image' => '', 'dst_album' => '']))) {
             abort(400, '無效的輸入資料');
@@ -277,6 +276,49 @@ class ImagesController extends Controller
     {
         Image::where('image_id', $image_id)->firstOrFail()->delete();
         $status_code = 200;
+        $data = compact('status_code');
+        return response()->view('successes.show-status', $data, 200)
+                         ->header('content-type', 'application/xml');
+    }
+    
+    /**
+     * Resume the specified resource from storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function undelete(Request $request)
+    {
+        /* Getting xml data */
+        $data = simplexml_load_string($request->getContent());
+
+        $data = json_decode(json_encode($data), true);
+
+        /* Checking excess data */
+        if (count(array_diff_key($data, ['delete_token' => '', 'dst_album' => '']))) {
+            abort(400, '無效的輸入資料');
+        }
+
+        /* Getting token */
+        $token = '';
+        $authorizations = explode(', ', $request->header('authorization'));
+        foreach ($authorizations as $authorization) {
+            list($index, $value) = explode('=', $authorization, 2);
+            if ('token' === $index) {
+                $token = $value;
+                break;
+            }
+        }
+
+        /* Getting image or fail */
+        $image = Account::where('token', $token)->firstOrFail()
+                          ->albums()->where('album_id', $data['dst_album'])->firstOrFail()
+                          ->images()->where('delete_token', $data['delete_token'])->onlyTrashed()->firstOrFail();
+
+        $image->restore();
+
+        /* Compacting data */
+        $status_code = 204;
         $data = compact('status_code');
         return response()->view('successes.show-status', $data, 200)
                          ->header('content-type', 'application/xml');
