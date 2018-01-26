@@ -260,7 +260,9 @@ class ImagesController extends Controller
         /* Moving to destination album */
         $image->update(['album_id' => $album_destination->id]);
 
-        return response()->view('successes.show-id', [], 200)
+        $status_code = 204;
+        $data = compact($status_code);
+        return response()->view('successes.show-status', $data, 200)
                          ->header('content-type', 'application/xml');
     }
     
@@ -274,7 +276,9 @@ class ImagesController extends Controller
     public function destroy($album_id, $image_id)
     {
         Image::where('image_id', $image_id)->firstOrFail()->delete();
-        return response()->view('successes.show-id', [], 200)
+        $status_code = 204;
+        $data = compact($status_code);
+        return response()->view('successes.show-status', $data, 200)
                          ->header('content-type', 'application/xml');
     }
 
