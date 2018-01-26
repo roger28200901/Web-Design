@@ -7,6 +7,7 @@ use App\Account;
 use App\Album;
 use App\Image;
 use Validator;
+use Storage;
 
 class ImagesController extends Controller
 {
@@ -206,7 +207,44 @@ class ImagesController extends Controller
      */
     public function update(Request $request, $album_id, $image_id)
     {
-        //
+        $image = Album::where('album_id', $album_id)->firstOrFail()->images()->where('image_id', $image_id)->firstOrFail();
+
+        $data = $this->parseContent($request->getContent());
+
+        if (isset($data['image'])) {
+            /* Deleting image in storage */
+            Storage::disk('upload')->delete($image->filename);
+
+            /* Storing into storage */
+            $filename = md5(uniqid(rand())) . '.jpg';
+            $image_original = imagecreatefromstring($data['image']);
+            imagejpeg($image_original, base_path("images/$filename"), 40);
+            imagedestroy($image_original);
+
+            /* Getting image info */
+            $link = url("/i/$filename");
+            list($width, $height) = getimagesize(base_path("images/$filename")); // Getting width and height of image
+            $size = filesize(base_path("images/$filename")); // Getting size of image
+            $image_info = [
+                'filename' => $filename,
+                'width' => $width,
+                'height' => $height,
+                'size' => $size,
+                'link' => $link,
+            ];
+
+            /* Storing model */
+            unset($data['image']);
+            $data = array_merge($data, $image_info);
+        }
+
+        $image->update($data);
+
+        /* Compacting data */
+        $id = $image->image_id;
+        $data = compact('id');
+        return response()->view('successes.show-id', $data, 200)
+                         ->header('content-type', 'application/xml');
     }
 
     /**
@@ -324,6 +362,59 @@ class ImagesController extends Controller
                          ->header('content-type', 'application/xml');
     }
 
+    private function parseContent($content)
+    {
+        $raw_data = $content;
+        $boundary = substr($raw_data, 0, strpos($raw_data, "\r\n"));
+
+        // Fetch each part
+        $parts = array_slice(explode($boundary, $raw_data), 1);
+        $data = [];
+
+        foreach ($parts as $part) {
+            // If this is the last part, break
+            if ($part == "--\r\n") break;
+
+            // Separate content from headers
+            $part = ltrim($part, "\r\n");
+            list($raw_headers, $body) = explode("\r\n\r\n", $part, 2);
+
+            // Parse the headers list
+            $raw_headers = explode("\r\n", $raw_headers);
+            $headers = array();
+            foreach ($raw_headers as $header) {
+                list($name, $value) = explode(':', $header);
+                $headers[strtolower($name)] = ltrim($value, ' ');
+            }
+
+            // Parse the Content-Disposition to get the field name, etc.
+            if (isset($headers['content-disposition'])) {
+                $filename = null;
+                preg_match(
+                    '/^(.+); *name="([^"]+)"(; *filename="([^"]+)")?/',
+                    $headers['content-disposition'],
+                    $matches
+                );
+                list(, $type, $name) = $matches;
+                isset($matches[4]) and $filename = $matches[4];
+
+                // handle your fields here
+                switch ($name) {
+                    // this is a file upload
+                    case 'userfile':
+                         file_put_contents($filename, $body);
+                         break;
+
+                    // default for all other files is to populate $data
+                    default:
+                         $data[$name] = substr($body, 0, strlen($body) - 2);
+                         break;
+                }
+            }
+        }
+        return $data;
+    }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -349,6 +440,7 @@ class ImagesController extends Controller
         $filename = md5(uniqid(rand())) . '.jpg';
         $quality = 40;
         imagejpeg($image_original, base_path("images/$filename"), $quality);
+        imagedestroy($image_original);
 
         return $filename;
     }
