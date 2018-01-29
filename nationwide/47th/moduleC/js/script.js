@@ -14,5 +14,4 @@ window.onload = function ()
     };
 
     var canvasPanel = new CanvasPanel(data);
-    var canvasFrame = new CanvasFrame(canvasPanel);
 }

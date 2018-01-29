@@ -39,7 +39,7 @@
     background-color: #315;
 }
 
-.button-edit:nth-child(3) {
+.button-edit:nth-child(4) {
     border-bottom-right-radius: 10px;
 }
 
@@ -86,16 +86,45 @@
 
 .panel-layer {
     width: 200px;
-    height: 710px;
+    height: 600px;
 
+    margin-top: 0;
+    margin-bottom: 0;
     border-bottom-width: 5px;
     border-bottom-style: solid;
     border-bottom-color: gray;
+    padding-left: 0;
+
+    overflow: hidden;
+    overflow-y: scroll;
+    list-style-type: none;
+}
+
+.panel-layer>li {
+    width: 200px;
+    height: 50px;
+
+    padding-left: 10px;
+
+    border-bottom-width: 1px;
+    border-bottom-style: dotted;
+    border-bottom-color: gray;
+    line-height: 50px;
+}
+
+.panel-layer>li.active {
+    background-color: #315;
+    color: white;
+}
+
+.panel-layer>li:hover {
+    background-color: #528;
+    color: white;
 }
 
 .panel-button {
     width: 200px;
-    height: 190px;
+    height: 250px;
 
     padding-top: 5px;
 }
@@ -184,6 +213,28 @@
     justify-content: space-around;
 }
 
+.label-layer {
+    box-sizing: border-box;
+
+    width: 200px;
+    height: 50px;
+
+    margin-top: 0;
+    margin-bottom: 0;
+    border-bottom-width: 5px;
+    border-bottom-style: solid;
+    border-bottom-color: gray;
+    border-top-right-radius: 15px;
+
+    text-align: center;
+    line-height: 45px;
+
+    background-color: #548;
+    color: white;
+    font-size: 24px;
+    font-family: '微軟正黑體';
+}
+
 .canvas {
     position: absolute;
 
@@ -229,7 +280,7 @@ div.component:hover {
     border-color: #548 !important;
 }
 
-div.component > div {
+div.component>div {
     position: absolute;
 
     top: 0;
