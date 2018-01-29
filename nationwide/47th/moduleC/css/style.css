@@ -1,0 +1,240 @@
+/* Style */
+* {
+    use-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+.panel, .canvas {
+    box-sizing: border-box;
+}
+
+.canvas:hover {
+    cursor: url('../img/pen.png'), auto;
+}
+
+.button-edit {
+    width: 180px;
+    height: 50px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+
+    border: 0;
+    border-radius: 3px;
+
+    background-color: #548;
+    font-size: 22px;
+    font-family: '微軟正黑體';
+    color: white;
+}
+
+.button-edit:hover {
+    background-color: #528;
+}
+
+.button-edit:active {
+    background-color: #315;
+}
+
+.button-edit:nth-child(3) {
+    border-bottom-right-radius: 10px;
+}
+
+.canvas-frame {
+    width: 1350px;
+    height: 900px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: gray;
+    border-radius: 20px;
+    margin-left: auto;
+    margin-right: auto;
+
+    display: flex;
+}
+
+.panel-draw {
+    width: 1150px;
+    height: 900px;
+}
+
+.panel-edit {
+    width: 200px;
+    height: 900px;
+}
+
+.panel-component {
+    width: 1150px;
+    height: 200px;
+
+    display: flex;
+}
+
+.panel-paint {
+    width: 1150px;
+    height: 700px;
+
+    border-right-width: 5px;
+    border-right-style: solid;
+    border-right-color: gray;
+
+    display: flex;
+}
+
+.panel-layer {
+    width: 200px;
+    height: 710px;
+
+    border-bottom-width: 5px;
+    border-bottom-style: solid;
+    border-bottom-color: gray;
+}
+
+.panel-button {
+    width: 200px;
+    height: 190px;
+
+    padding-top: 5px;
+}
+
+.panel-pen {
+    width: 850px;
+    height: 200px;
+}
+
+.panel-function {
+    width: 150px;
+    height: 700px;
+}
+
+.panel-canvas {
+    position: relative;
+
+    width: 1000px;
+    height: 700px;
+}
+
+.panel-illustration {
+    width: 300px;
+    height: 200px;
+
+    border-right-width: 5px;
+    border-right-style: solid;
+    border-right-color: gray;
+
+    border-bottom-width: 5px;
+    border-bottom-style: solid;
+    border-bottom-color: gray;
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.panel-line, .panel-color {
+    width: 850px;
+    height: 100px;
+
+    border-right-width: 5px;
+    border-right-style: solid;
+    border-right-color: gray;
+
+    border-bottom-width: 5px;
+    border-bottom-style: solid;
+    border-bottom-color: gray;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.panel-mode {
+    width: 150px;
+    height: 150px;
+
+    border-right-width: 5px;
+    border-right-style: solid;
+    border-right-color: gray;
+
+    border-bottom-width: 5px;
+    border-bottom-style: solid;
+    border-bottom-color: gray;
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.panel-shape {
+    width: 150px;
+    height: 550px;
+
+    border-right-width: 5px;
+    border-right-style: solid;
+    border-right-color: gray;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.canvas {
+    position: absolute;
+
+    border-width: 5px;
+    border-style: solid;
+    border-color: #548;
+    border-radius: 10px;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+}
+
+img.component {
+    box-sizing: border-box;
+
+    border-width: 5px;
+    border-style: solid;
+    border-color: white;
+    border-radius: 15px;
+
+    background-size: cover;
+}
+
+img.component:hover {
+    border-color: #548 !important;
+}
+
+div.component {
+    position: relative;
+
+    box-sizing: border-box;
+
+    border-width: 5px;
+    border-style: solid;
+    border-color: black;
+    border-radius: 3px; 
+}
+
+div.component:hover {
+    border-color: #548 !important;
+}
+
+div.component > div {
+    position: absolute;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+}
