@@ -5,59 +5,171 @@ var CanvasPanel = function (data)
     this.height = Math.max(100, Math.min(680, data.height || 600));
     this.backgroundColor = data.backgroundColor || 'white';
     this.canvas = data.canvas || null;
-
-    this.modes = [];
-    this.shapes = [];
-    this.colors = [];
-    this.lines = [];
-    this.illustrations = [];
-
-    this.currentMode = null;
-    this.currentShape = null;
-    this.currentColor = null;
-    this.currentLine = null;
-    this.currentIllustration = null;
+    this.panelLayer = data.panelLayer || null;
 
     this.canvas.width = this.width;
     this.canvas.height = this.height;
     this.context = this.canvas.getContext('2d');
     this.context.lineCap = 'round';
 
+    this.modes = [];
+    this.shapes = [];
+    this.colors = [];
+    this.lines = [];
+    this.illustrations = [];
+    this.layers = [];
+    this.currentMode = null;
+    this.currentShape = null;
+    this.numberOfAngle = null;
+    this.currentColor = null;
+    this.currentLine = null;
+    this.currentIllustration = null;
+
+    this.activeShape = null;
+    this.activeLayer = null;
+
+    this.refresh = false;
+
+    this.init();
+}
+
+CanvasPanel.prototype.init = function ()
+{
     this.initModes();
     this.initShapes();
     this.initColors();
     this.initLines();
     this.initIllustrations();
-
-    this.setMode(this.modes[0]);
-    this.setShape(this.shapes[0]);
-    this.setColor(this.colors[0]);
-    this.setLine(this.lines[3]);
+    this.newLayer();
 
     this.clear();
 
-    this.interval = 300;
-    setInterval(this.redraw(), this.interval);
-
     var canvasPanel = this;
-    canvasPanel.canvas.addEventListener('mousedown', function (event) {
-        switch (canvasPanel.currentMode) {
+
+    var interval = 30;
+    setInterval(function () {
+        canvasPanel.redraw();
+    }, interval);
+
+    document.getElementById('newLayer').addEventListener('click', function (event) {
+        canvasPanel.newLayer();
+    });
+
+canvasPanel.canvas.addEventListener('mousedown', function (event) {
+    var mouse = canvasPanel.getMouse(event);
+    switch (canvasPanel.currentMode) {
+        case 'choose':
+            break;
+        case 'paint-bucket':
+            break;
+        case 'brush':
+        case 'line':
+        case 'shape':
+            var shape = new Shape({
+                'start': mouse,
+                'end': mouse,
+                'mode': canvasPanel.currentMode,
+                'color': canvasPanel.currentColor,
+                'line': canvasPanel.currentLine,
+                'points': [mouse],
+            });
+            if ('shape' === canvasPanel.currentMode) {
+            }
+            canvasPanel.activeShape = shape;
+            canvasPanel.activeLayer.shapes.push(shape);
+            break;
+        case 'illustration':
+            break;
+    }
+    canvasPanel.refresh = true;
+});
+
+canvasPanel.canvas.addEventListener('mousemove', function (event) {
+    if (canvasPanel.activeShape) {
+        var mouse = canvasPanel.getMouse(event);
+        switch (canvasPanel.activeShape.mode) {
             case 'choose':
                 break;
             case 'paint-bucket':
                 break;
             case 'brush':
+                canvasPanel.activeShape.points.push(mouse);
                 break;
             case 'line':
+                canvasPanel.activeShape.end = mouse;
                 break;
+            case 'shape':
+                break;
+            case 'illustration':
         }
+        canvasPanel.refresh = true;
+    }
+});
+
+canvasPanel.canvas.addEventListener('mouseup', function (event) {
+    canvasPanel.activeShape = null;
+});
+
+}
+
+CanvasPanel.prototype.keydown = function (event)
+{
+    if (this.activeShape) {
+        if (16 === event.keyCode) {
+            this.activeShape.withShift = true;
+        } else if (17 === event.keyCode) {
+            this.activeShape.withCtrl = true;
+        }
+        this.refresh = true;
+    }
+}
+
+CanvasPanel.prototype.keyup = function (event)
+{
+    if (this.activeShape) {
+        if (16 === event.keyCode) {
+            this.activeShape.withShift = false;
+        } else if (17 === event.keyCode) {
+            this.activeShape.withCtrl = false;
+        }
+        this.refresh = true;
+    }
+}
+
+CanvasPanel.prototype.getMouse = function (event)
+{
+    var point = new Point({
+        'x': event.offsetX,
+        'y': event.offsetY,
     });
+    return point;
+}
+
+CanvasPanel.prototype.clear = function()
+{
+    this.context.fillStyle = this.backgroundColor;
+    this.context.fillRect(0, 0, this.width, this.height);
+    this.context.fill();
+}
+
+CanvasPanel.prototype.redraw = function()
+{
+    if (this.refresh) {
+        var context = this.context;
+        this.refresh = false;
+        this.clear();
+        this.layers.forEach(function (layer) {
+            layer.shapes.forEach(function (shape) {
+                shape.draw(context);
+            });
+        });
+    }
 }
 
 CanvasPanel.prototype.initModes = function ()
 {
-    var modes = ['choose', 'paint-bucket', 'brush', 'line'];
-    var modeUrls = ['img/選取.png', 'img/油漆桶.png', 'img/筆刷.png', 'img/直線.png'];
+    var modes = ['choose', 'paint-bucket', 'brush', 'line', 'shape', 'illustration'];
+    var modeUrls = ['img/選取.png', 'img/油漆桶.png', 'img/筆刷.png', 'img/直線.png', 'img/形狀.png', 'img/插圖.png'];
 
     var panelMode = document.getElementById('panelMode');
     var canvasPanel = this;
@@ -73,16 +185,18 @@ CanvasPanel.prototype.initModes = function ()
         canvasPanel.modes.push(imageMode);
 
         imageMode.addEventListener('click', function (event) {
-            canvasPanel.setMode(imageMode);
+            canvasPanel.setMode(this);
         });
         panelMode.append(imageMode);
     });
+
+    this.setMode(this.modes[0]);
 }
 
 CanvasPanel.prototype.initShapes = function ()
 {
-    var shapes = ['rectangle', 'oval', 'polygon', 'star'];
-    var shapeUrls = ['img/矩形.png', 'img/橢圓形.png', 'img/多邊形.png', 'img/星形.png'];
+    var shapes = ['oval', 'polygon', 'star'];
+    var shapeUrls = ['img/橢圓形.png', 'img/多邊形.png', 'img/星形.png'];
 
     var panelShape = document.getElementById('panelShape');
     var canvasPanel = this;
@@ -90,18 +204,20 @@ CanvasPanel.prototype.initShapes = function ()
     shapes.forEach(function (shape, index) {
         var imageShape = document.createElement('img');
         imageShape.classList.add('component');
-        imageShape.style.width = '110px';
-        imageShape.style.height = '110px';
+        imageShape.style.width = '100px';
+        imageShape.style.height = '100px';
         imageShape.style.backgroundImage = 'url("' + shapeUrls[index] + '")';
         imageShape.dataset.shape = shape;
 
         canvasPanel.shapes.push(imageShape);
 
         imageShape.addEventListener('click', function (event) {
-            canvasPanel.setShape(imageShape);
+            canvasPanel.setShape(this);
         });
         panelShape.append(imageShape);
     });
+
+    this.setShape(this.shapes[0]);
 }
 
 CanvasPanel.prototype.initColors = function ()
@@ -128,7 +244,7 @@ CanvasPanel.prototype.initColors = function ()
         canvasPanel.colors.push(divColor);
 
         divColor.addEventListener('click', function (event) {
-            canvasPanel.setColor(divColor);
+            canvasPanel.setColor(this);
         });
 
         panelColor.append(divColor);
@@ -148,11 +264,13 @@ CanvasPanel.prototype.initColors = function ()
     });
 
     panelColor.append(inputColor);
+
+    this.setColor(this.colors[0]);
 }
 
 CanvasPanel.prototype.initLines = function ()
 {
-    var lines = [1, 2, 3, 4, 5, 6, 7, 8];
+    var lines = [2, 4, 6, 8, 10, 12, 14, 16];
 
     var panelLine = document.getElementById('panelLine');
     var canvasPanel = this;
@@ -165,8 +283,8 @@ CanvasPanel.prototype.initLines = function ()
         divLine.dataset.line = line;
 
         var linePiece = document.createElement('div');
-        linePiece.style.width = (line * 2) + 'px';
-        linePiece.style.height = (line * 2) + 'px';
+        linePiece.style.width = line + 'px';
+        linePiece.style.height = line + 'px';
         linePiece.style.backgroundColor = 'black';
 
         divLine.append(linePiece);
@@ -174,11 +292,13 @@ CanvasPanel.prototype.initLines = function ()
         canvasPanel.lines.push(divLine);
 
         divLine.addEventListener('click', function (event) {
-            canvasPanel.setLine(divLine);
+            canvasPanel.setLine(this);
         });
 
         panelLine.append(divLine);
     });
+
+    this.setLine(this.lines[3]);
 }
 
 CanvasPanel.prototype.initIllustrations = function ()
@@ -200,17 +320,41 @@ CanvasPanel.prototype.initIllustrations = function ()
         canvasPanel.illustrations.push(imageIllustration);
 
         imageIllustration.addEventListener('click', function (event) {
-            canvasPanel.setIllustration(imageIllustration);
+            canvasPanel.setIllustration(this);
         });
         panelIllustration.append(imageIllustration);
     });
 }
 
-CanvasPanel.prototype.setMode = function (move)
+CanvasPanel.prototype.newLayer = function ()
+{
+    var layerElement = document.createElement('li');
+    var numberOfLayers = this.layers.length + 1;
+    layerElement.classList.add('active');
+    layerElement.textContent = '圖層' + numberOfLayers;
+
+    var data = {
+        'name': layerElement.textContent,
+        'element': layerElement,
+    };
+    var layer = new Layer(data);
+
+    this.layers.push(layer);
+    this.panelLayer.append(layerElement);
+
+    var canvasPanel = this;
+    layerElement.addEventListener('click', function (event) {
+        canvasPanel.setLayer(layer);
+    });
+
+    canvasPanel.setLayer(layer);
+}
+
+CanvasPanel.prototype.setMode = function (mode)
 {
     this.cancelModes();
-    this.currentMode = move.dataset.mode;
-    move.style.borderColor = '#315';
+    this.currentMode = mode.dataset.mode;
+    mode.style.borderColor = '#315';
 }
 
 CanvasPanel.prototype.setShape = function (shape)
@@ -239,6 +383,13 @@ CanvasPanel.prototype.setIllustration = function (illustration)
     this.cancelIllustrations();
     this.currentIllustration = illustration.dataset.illustration;
     illustration.style.borderColor = '#315';
+}
+
+CanvasPanel.prototype.setLayer = function (layer)
+{
+    this.cancelLayers();
+    this.activeLayer = layer;
+    layer.element.classList.add('active');
 }
 
 CanvasPanel.prototype.cancelModes = function ()
@@ -286,13 +437,11 @@ CanvasPanel.prototype.cancelIllustrations = function ()
     this.currentIllustration = null;
 }
 
-CanvasPanel.prototype.clear = function()
+CanvasPanel.prototype.cancelLayers = function ()
 {
-    this.context.fillStyle = this.backgroundColor;
-    this.context.fillRect(0, 0, this.width, this.height);
-}
+    this.layers.forEach(function (layer) {
+        layer.element.classList.remove('active');
+    });
 
-CanvasPanel.prototype.redraw = function()
-{
-    // this.clear();
+    this.activeLayer = null;
 }

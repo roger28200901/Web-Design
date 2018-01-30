@@ -110,6 +110,8 @@
     border-bottom-style: dotted;
     border-bottom-color: gray;
     line-height: 50px;
+
+    font-family: '微軟正黑體';
 }
 
 .panel-layer>li.active {
@@ -183,7 +185,7 @@
 
 .panel-mode {
     width: 150px;
-    height: 150px;
+    height: 215px;
 
     border-right-width: 5px;
     border-right-style: solid;
@@ -201,7 +203,7 @@
 
 .panel-shape {
     width: 150px;
-    height: 550px;
+    height: 485px;
 
     border-right-width: 5px;
     border-right-style: solid;
