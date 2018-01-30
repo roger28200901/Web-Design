@@ -65,6 +65,7 @@ canvasPanel.canvas.addEventListener('mousedown', function (event) {
         case 'brush':
         case 'line':
         case 'shape':
+        case 'illustration':
             var shape = new Shape({
                 'start': mouse,
                 'end': mouse,
@@ -74,13 +75,12 @@ canvasPanel.canvas.addEventListener('mousedown', function (event) {
                 'points': [mouse],
                 'numberOfAngles': canvasPanel.numberOfAngles,
                 'shape': canvasPanel.currentShape,
+                'illustration': canvasPanel.currentIllustration,
             });
             if ('shape' === canvasPanel.currentMode) {
             }
             canvasPanel.activeShape = shape;
             canvasPanel.activeLayer.shapes.push(shape);
-            break;
-        case 'illustration':
             break;
     }
     canvasPanel.refresh = true;
@@ -102,6 +102,8 @@ canvasPanel.canvas.addEventListener('mousemove', function (event) {
                 canvasPanel.activeShape.end = mouse;
                 break;
             case 'illustration':
+                canvasPanel.activeShape.points = [mouse];
+                break;
         }
         canvasPanel.refresh = true;
     }
@@ -309,7 +311,7 @@ CanvasPanel.prototype.initIllustrations = function ()
         imageIllustration.classList.add('component');
         imageIllustration.style.width = '65px';
         imageIllustration.style.height = '90px';
-        imageIllustration.style.backgroundImage = 'url("' + illustrationUrls[index] + '")';
+        imageIllustration.src = illustrationUrls[index];
         imageIllustration.dataset.illustration = illustration;
 
         canvasPanel.illustrations.push(imageIllustration);
@@ -429,7 +431,7 @@ CanvasPanel.prototype.setLine = function (line)
 CanvasPanel.prototype.setIllustration = function (illustration)
 {
     this.cancelIllustrations();
-    this.currentIllustration = illustration.dataset.illustration;
+    this.currentIllustration = illustration;
     this.setMode(this.modes[5]);
     illustration.style.borderColor = '#315';
 }

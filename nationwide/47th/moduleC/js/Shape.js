@@ -9,6 +9,7 @@ var Shape = function (data)
     this.points = data.points || [];
     this.numberOfAngles = data.numberOfAngles || 3;
     this.shape = data.shape || '';
+    this.illustration = data.illustration || '';
 
     this.withShift = false;
     this.withCtrl = false;
@@ -19,7 +20,6 @@ Shape.prototype.draw = function (context)
     context.beginPath();
     switch (this.mode) {
         case 'brush':
-            context.strokeStyle = this.color;
             context.lineWidth = this.line;
             this.points.forEach(function (point) {
                 context.lineTo(point.x, point.y);
@@ -64,7 +64,6 @@ Shape.prototype.draw = function (context)
                         var x = this.start.x + radius * Math.cos(degree);
                         var y = this.start.y + radius * Math.sin(degree);
                         context.lineTo(x, y);
-                        context.moveTo(x, y);
                     }
 
                     break;
@@ -87,13 +86,17 @@ Shape.prototype.draw = function (context)
                         context.lineTo(x, y);
                         context.moveTo(x, y);
                     }
-
                     break;
             }
             break;
+        case 'illustration':
+            context.drawImage(this.illustration, this.points[0].x, this.points[0].y);
+            break;
     }
     context.closePath();
-    context.strokeStyle = this.color;
     context.lineWidth = this.line;
+    context.strokeStyle = this.color;
     context.stroke();
+    // context.fillStyle = this.color;
+    // context.fill();
 }
