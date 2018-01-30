@@ -1,8 +1,8 @@
 /* CanvasPanel */
 var CanvasPanel = function (data)
 {
-    this.width = Math.max(100, Math.min(980, data.width || 800));
-    this.height = Math.max(100, Math.min(680, data.height || 600));
+    this.width = Math.max(100, Math.min(980, parseInt(data.width) || 800));
+    this.height = Math.max(100, Math.min(680, parseInt(data.height) || 600));
     this.backgroundColor = data.backgroundColor || 'white';
     this.canvas = data.canvas || null;
     this.panelLayer = data.panelLayer || null;
@@ -20,10 +20,10 @@ var CanvasPanel = function (data)
     this.layers = [];
     this.currentMode = null;
     this.currentShape = null;
-    this.numberOfAngle = null;
     this.currentColor = null;
     this.currentLine = null;
     this.currentIllustration = null;
+    this.numberOfAngles = null;
 
     this.activeShape = null;
     this.activeLayer = null;
@@ -72,6 +72,8 @@ canvasPanel.canvas.addEventListener('mousedown', function (event) {
                 'color': canvasPanel.currentColor,
                 'line': canvasPanel.currentLine,
                 'points': [mouse],
+                'numberOfAngles': canvasPanel.numberOfAngles,
+                'shape': canvasPanel.currentShape,
             });
             if ('shape' === canvasPanel.currentMode) {
             }
@@ -96,9 +98,8 @@ canvasPanel.canvas.addEventListener('mousemove', function (event) {
                 canvasPanel.activeShape.points.push(mouse);
                 break;
             case 'line':
-                canvasPanel.activeShape.end = mouse;
-                break;
             case 'shape':
+                canvasPanel.activeShape.end = mouse;
                 break;
             case 'illustration':
         }
@@ -216,8 +217,6 @@ CanvasPanel.prototype.initShapes = function ()
         });
         panelShape.append(imageShape);
     });
-
-    this.setShape(this.shapes[0]);
 }
 
 CanvasPanel.prototype.initColors = function ()
@@ -264,8 +263,6 @@ CanvasPanel.prototype.initColors = function ()
     });
 
     panelColor.append(inputColor);
-
-    this.setColor(this.colors[0]);
 }
 
 CanvasPanel.prototype.initLines = function ()
@@ -297,8 +294,6 @@ CanvasPanel.prototype.initLines = function ()
 
         panelLine.append(divLine);
     });
-
-    this.setLine(this.lines[3]);
 }
 
 CanvasPanel.prototype.initIllustrations = function ()
@@ -354,6 +349,46 @@ CanvasPanel.prototype.setMode = function (mode)
 {
     this.cancelModes();
     this.currentMode = mode.dataset.mode;
+    switch (this.currentMode) {
+        case 'choose':
+        case 'paint-bucket':
+            this.cancelShapes();
+            this.cancelColors();
+            this.cancelLines();
+            this.cancelIllustrations();
+            break;
+        case 'brush':
+        case 'line':
+            this.cancelShapes();
+            this.cancelIllustrations();
+            if (!this.currentColor) {
+                this.setColor(this.colors[0]);
+            }
+            if (!this.currentLine) {
+                this.setLine(this.lines[3]);
+            }
+            break;
+        case 'shape':
+            this.cancelIllustrations();
+            if (!this.currentShape) {
+                this.setShape(this.shapes[0]);
+            }
+            if (!this.currentColor) {
+                this.setColor(this.colors[0]);
+            }
+            if (!this.currentLine) {
+                this.setLine(this.lines[3]);
+            }
+            break;
+        case 'illustration':
+            this.cancelShapes();
+            this.cancelColors();
+            this.cancelLines();
+            if (!this.currentIllustration) {
+                this.setIllustration(this.illustrations[0]);
+            }
+            break;
+    }
     mode.style.borderColor = '#315';
 }
 
@@ -361,27 +396,41 @@ CanvasPanel.prototype.setShape = function (shape)
 {
     this.cancelShapes();
     this.currentShape = shape.dataset.shape;
+    this.setMode(this.modes[4]);
+    switch (this.currentShape) {
+        case 'polygon':
+            var message = message || '請輸入多邊形邊數 N (N > 2)';
+        case 'star':
+            var message = message || '請輸入星形頂點數 V (V > 2)';
+            this.numberOfAngles = Math.max(parseInt(prompt(message)) || 3, 3);
+            break;
+    }
     shape.style.borderColor = '#315';
 }
 
 CanvasPanel.prototype.setColor = function (color)
 {
-    this.cancelColors();
-    this.currentColor = color.dataset.color;
-    color.style.borderColor = '#dae';
+    if ('brush' === this.currentMode || 'line' === this.currentMode || 'shape' === this.currentMode) {
+        this.cancelColors();
+        this.currentColor = color.dataset.color;
+        color.style.borderColor = '#dae';
+    }
 }
 
 CanvasPanel.prototype.setLine = function (line)
 {
-    this.cancelLines();
-    this.currentLine = line.dataset.line;
-    line.style.borderColor = '#dae';
+    if ('brush' === this.currentMode || 'line' === this.currentMode || 'shape' === this.currentMode) {
+        this.cancelLines();
+        this.currentLine = line.dataset.line;
+        line.style.borderColor = '#dae';
+    }
 }
 
 CanvasPanel.prototype.setIllustration = function (illustration)
 {
     this.cancelIllustrations();
     this.currentIllustration = illustration.dataset.illustration;
+    this.setMode(this.modes[5]);
     illustration.style.borderColor = '#315';
 }
 
@@ -408,6 +457,7 @@ CanvasPanel.prototype.cancelShapes = function ()
     });
 
     this.currentShape = null;
+    this.numberOfAngles = null;
 }
 
 CanvasPanel.prototype.cancelColors = function ()
