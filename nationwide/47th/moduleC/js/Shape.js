@@ -14,6 +14,9 @@ var Shape = function (data)
 
     this.withShift = false;
     this.withCtrl = false;
+
+    this.leftTop = new Point({});
+    this.rightBottom = new Point({});
 }
 
 Shape.prototype.draw = function (context)
@@ -21,7 +24,6 @@ Shape.prototype.draw = function (context)
     context.beginPath();
     switch (this.mode) {
         case 'brush':
-            context.lineWidth = this.line;
             this.points.forEach(function (point) {
                 context.lineTo(point.x, point.y);
                 context.moveTo(point.x, point.y);
@@ -48,8 +50,12 @@ Shape.prototype.draw = function (context)
                     var height = Math.abs(this.start.y - this.end.y);
 
                     context.save();
-                    context.scale(1, height / width);
-                    context.arc(this.start.x, this.start.y / (height / width), width, 0, 2 * Math.PI);
+                    if (this.withShift) {
+                        context.arc(this.start.x, this.start.y, width, 0, 2 * Math.PI);
+                    } else {
+                        context.scale(1, height / width);
+                        context.arc(this.start.x, this.start.y / (height / width), width, 0, 2 * Math.PI);
+                    }
                     context.restore();
 
                     break;
@@ -86,8 +92,6 @@ Shape.prototype.draw = function (context)
                         if (!this.withShift) {
                             x = this.start.x + (x - this.start.x) * width / height;
                             y = this.start.y + (y - this.start.y) * height / width;
-                            // x = Math.max(Math.min(x, this.start.x + width), this.start.x - width);
-                            // y = Math.max(Math.min(y, this.start.y + height), this.start.y - height);
                         }
                         context.lineTo(x, y);
                         degree = angle * (i % this.numberOfAngles + 0.5) - rotate
@@ -103,7 +107,7 @@ Shape.prototype.draw = function (context)
             }
             break;
         case 'illustration':
-            context.drawImage(this.illustration, this.points[0].x, this.points[0].y);
+            context.drawImage(this.illustration, this.start.x, this.start.y);
             break;
     }
     context.closePath();
@@ -113,5 +117,73 @@ Shape.prototype.draw = function (context)
     if (this.isFilled) {
         context.fillStyle = this.color;
         context.fill();
+    }
+}
+
+Shape.prototype.focus = function (context)
+{
+    this.getBound();
+    context.beginPath();
+    context.rect(this.leftTop.x, this.leftTop.y, this.rightBottom.x - this.leftTop.x, this.rightBottom.y - this.leftTop.y);
+    context.closePath();
+    context.lineWidth = 5;
+    context.strokeStyle = 'red';
+    context.stroke();
+}
+
+Shape.prototype.getBound = function ()
+{
+    var shape = this;
+    shape.leftTop = new Point(shape.start);
+    shape.rightBottom = new Point(shape.end);
+    if ('brush' === shape.mode) {
+        shape.points.forEach(function (point) {
+            shape.leftTop.x = Math.min(shape.leftTop.x, point.x);
+            shape.leftTop.y = Math.min(shape.leftTop.y, point.y);
+            shape.rightBottom.x = Math.max(shape.rightBottom.x, point.x);
+            shape.rightBottom.y = Math.max(shape.rightBottom.y, point.y);
+        });
+        return;
+    }
+
+    if ('line' === shape.mode) {
+        if (shape.leftTop.x > shape.rightBottom.x) {
+            shape.rightBottom.x = [shape.leftTop.x, shape.leftTop.x = shape.rightBottom.x][0]; // Swap
+        }
+        if (shape.leftTop.y > shape.rightBottom.y) {
+            shape.rightBottom.y = [shape.leftTop.y, shape.leftTop.y = shape.rightBottom.y][0]; // Swap
+        }
+        return;
+    }
+
+    if ('shape' === shape.mode) {
+        if ('oval' === shape.shape) {
+            if (this.withShift) {
+                var radius = Math.abs(shape.end.x - shape.start.x);
+                shape.leftTop.x = shape.start.x - radius;
+                shape.leftTop.y = shape.start.y - radius;
+                shape.rightBottom.x = shape.start.x + radius;
+                shape.rightBottom.y = shape.start.y + radius;
+                return;
+            }
+            shape.leftTop.x = shape.start.x - (shape.end.x - shape.start.x);
+            shape.leftTop.y = shape.start.y - (shape.end.y - shape.start.y);
+            return;
+        }
+        var width = Math.abs(this.start.x - this.end.x);
+        var height = Math.abs(this.start.y - this.end.y);
+        var radius = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
+        if (this.withShift) {
+            shape.leftTop.x = shape.start.x - radius;
+            shape.leftTop.y = shape.start.y - radius;
+            shape.rightBottom.x = shape.start.x + radius;
+            shape.rightBottom.y = shape.start.y + radius;
+            return;
+        }
+        shape.leftTop.x = shape.start.x + radius * width / height;
+        shape.rightBottom.x = shape.start.x - radius * width / height;
+        shape.leftTop.y = shape.start.y + radius * height / width;
+        shape.rightBottom.y = shape.start.y - radius * height / width;
+        return;
     }
 }

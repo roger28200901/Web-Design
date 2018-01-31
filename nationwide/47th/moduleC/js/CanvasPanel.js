@@ -42,7 +42,6 @@ CanvasPanel.prototype.init = function ()
     this.initColors();
     this.initLines();
     this.initIllustrations();
-    this.newLayer();
 
     this.clear();
 
@@ -52,10 +51,6 @@ CanvasPanel.prototype.init = function ()
     setInterval(function () {
         canvasPanel.redraw();
     }, interval);
-
-    document.getElementById('newLayer').addEventListener('click', function (event) {
-        canvasPanel.newLayer();
-    });
 
 canvasPanel.buttonFillShift.addEventListener('click', function (event) {
     canvasPanel.fillShift();
@@ -67,6 +62,7 @@ canvasPanel.canvas.addEventListener('mousedown', function (event) {
         case 'choose':
             break;
         case 'paint-bucket':
+            canvasPanel.newLayer();
             break;
         case 'brush':
         case 'line':
@@ -84,9 +80,8 @@ canvasPanel.canvas.addEventListener('mousedown', function (event) {
                 'illustration': canvasPanel.currentIllustration,
                 'isFilled': canvasPanel.isFilled,
             });
-            if ('shape' === canvasPanel.currentMode) {
-            }
             canvasPanel.activeShape = shape;
+            canvasPanel.newLayer();
             canvasPanel.activeLayer.shapes.push(shape);
             break;
     }
@@ -103,13 +98,14 @@ canvasPanel.canvas.addEventListener('mousemove', function (event) {
                 break;
             case 'brush':
                 canvasPanel.activeShape.points.push(mouse);
-                break;
             case 'line':
             case 'shape':
                 canvasPanel.activeShape.end = mouse;
                 break;
             case 'illustration':
-                canvasPanel.activeShape.points = [mouse];
+                canvasPanel.activeShape.start = mouse;
+                canvasPanel.activeShape.end.x = mouse.x + canvasPanel.currentIllustration.width;
+                canvasPanel.activeShape.end.y = mouse.y + canvasPanel.currentIllustration.height;
                 break;
         }
         canvasPanel.refresh = true;
@@ -117,6 +113,7 @@ canvasPanel.canvas.addEventListener('mousemove', function (event) {
 });
 
 canvasPanel.canvas.addEventListener('mouseup', function (event) {
+    canvasPanel.activeLayer = null;
     canvasPanel.activeShape = null;
 });
 
@@ -183,6 +180,10 @@ CanvasPanel.prototype.redraw = function()
                 shape.draw(context);
             });
         });
+
+        if ('choose' === this.currentMode && this.activeLayer) {
+            this.activeLayer.shapes[0].focus(context);
+        }
     }
 }
 
@@ -329,7 +330,6 @@ CanvasPanel.prototype.initIllustrations = function ()
         imageIllustration.style.width = '65px';
         imageIllustration.style.height = '90px';
         imageIllustration.src = illustrationUrls[index];
-        imageIllustration.dataset.illustration = illustration;
 
         canvasPanel.illustrations.push(imageIllustration);
 
@@ -358,6 +358,8 @@ CanvasPanel.prototype.newLayer = function ()
 
     var canvasPanel = this;
     layerElement.addEventListener('click', function (event) {
+        canvasPanel.setMode(canvasPanel.modes[0]);
+        canvasPanel.refresh = true;
         canvasPanel.setLayer(layer);
     });
 
