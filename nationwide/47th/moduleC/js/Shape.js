@@ -63,6 +63,10 @@ Shape.prototype.draw = function (context)
                         var degree = angle * (i % this.numberOfAngles) - rotate
                         var x = this.start.x + radius * Math.cos(degree);
                         var y = this.start.y + radius * Math.sin(degree);
+                        if (!this.withShift) {
+                            x = Math.max(Math.min(x, this.start.x + width), this.start.x - width);
+                            y = Math.max(Math.min(y, this.start.y + height), this.start.y - height);
+                        }
                         context.lineTo(x, y);
                     }
 
@@ -78,13 +82,15 @@ Shape.prototype.draw = function (context)
                         var degree = angle * (i % this.numberOfAngles) - rotate
                         var x = this.start.x + radius * Math.cos(degree);
                         var y = this.start.y + radius * Math.sin(degree);
+                        if (!this.withShift) {
+                            x = Math.max(Math.min(x, this.start.x + width), this.start.x - width);
+                            y = Math.max(Math.min(y, this.start.y + height), this.start.y - height);
+                        }
                         context.lineTo(x, y);
-                        context.moveTo(x, y);
                         degree = angle * (i % this.numberOfAngles + 0.5) - rotate
                         x = this.start.x + radius * Math.cos(degree) / 2;
                         y = this.start.y + radius * Math.sin(degree) / 2;
                         context.lineTo(x, y);
-                        context.moveTo(x, y);
                     }
                     break;
             }

@@ -182,7 +182,7 @@ CanvasPanel.prototype.initModes = function ()
         imageMode.classList.add('component');
         imageMode.style.width = '70px';
         imageMode.style.height = '70px';
-        imageMode.style.backgroundImage = 'url("' + modeUrls[index] + '")';
+        imageMode.src = modeUrls[index];
         imageMode.dataset.mode = mode;
 
         canvasPanel.modes.push(imageMode);
@@ -209,7 +209,7 @@ CanvasPanel.prototype.initShapes = function ()
         imageShape.classList.add('component');
         imageShape.style.width = '100px';
         imageShape.style.height = '100px';
-        imageShape.style.backgroundImage = 'url("' + shapeUrls[index] + '")';
+        imageShape.src = shapeUrls[index];
         imageShape.dataset.shape = shape;
 
         canvasPanel.shapes.push(imageShape);
