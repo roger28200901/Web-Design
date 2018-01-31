@@ -10,6 +10,7 @@ var Shape = function (data)
     this.numberOfAngles = data.numberOfAngles || 3;
     this.shape = data.shape || '';
     this.illustration = data.illustration || '';
+    this.isFilled = data.isFilled || false;
 
     this.withShift = false;
     this.withCtrl = false;
@@ -64,8 +65,8 @@ Shape.prototype.draw = function (context)
                         var x = this.start.x + radius * Math.cos(degree);
                         var y = this.start.y + radius * Math.sin(degree);
                         if (!this.withShift) {
-                            x = Math.max(Math.min(x, this.start.x + width), this.start.x - width);
-                            y = Math.max(Math.min(y, this.start.y + height), this.start.y - height);
+                            x = this.start.x + (x - this.start.x) * width / height;
+                            y = this.start.y + (y - this.start.y) * height / width;
                         }
                         context.lineTo(x, y);
                     }
@@ -83,13 +84,19 @@ Shape.prototype.draw = function (context)
                         var x = this.start.x + radius * Math.cos(degree);
                         var y = this.start.y + radius * Math.sin(degree);
                         if (!this.withShift) {
-                            x = Math.max(Math.min(x, this.start.x + width), this.start.x - width);
-                            y = Math.max(Math.min(y, this.start.y + height), this.start.y - height);
+                            x = this.start.x + (x - this.start.x) * width / height;
+                            y = this.start.y + (y - this.start.y) * height / width;
+                            // x = Math.max(Math.min(x, this.start.x + width), this.start.x - width);
+                            // y = Math.max(Math.min(y, this.start.y + height), this.start.y - height);
                         }
                         context.lineTo(x, y);
                         degree = angle * (i % this.numberOfAngles + 0.5) - rotate
                         x = this.start.x + radius * Math.cos(degree) / 2;
                         y = this.start.y + radius * Math.sin(degree) / 2;
+                        if (!this.withShift) {
+                            x = this.start.x + (x - this.start.x) * width / height;
+                            y = this.start.y + (y - this.start.y) * height / width;
+                        }
                         context.lineTo(x, y);
                     }
                     break;
@@ -103,6 +110,8 @@ Shape.prototype.draw = function (context)
     context.lineWidth = this.line;
     context.strokeStyle = this.color;
     context.stroke();
-    // context.fillStyle = this.color;
-    // context.fill();
+    if (this.isFilled) {
+        context.fillStyle = this.color;
+        context.fill();
+    }
 }

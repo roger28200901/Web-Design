@@ -15,7 +15,7 @@
 }
 
 .button-edit {
-    width: 180px;
+    width: 90%;
     height: 50px;
     margin-top: 5px;
     margin-bottom: 5px;
@@ -29,6 +29,14 @@
     font-size: 22px;
     font-family: '微軟正黑體';
     color: white;
+}
+
+.button-edit.button-fill-shift {
+    width: 140px;
+    height: 45px;
+
+    margin: 0;
+    border-radius: 0;
 }
 
 .button-edit:hover {
@@ -137,14 +145,18 @@
 }
 
 .panel-function {
-    width: 150px;
+    width: 145px;
     height: 700px;
+
+    border-right-width: 5px;
+    border-right-style: solid;
+    border-right-color: gray;
 }
 
 .panel-canvas {
     position: relative;
 
-    width: 1000px;
+    width: 1005px;
     height: 700px;
 }
 
@@ -184,12 +196,8 @@
 }
 
 .panel-mode {
-    width: 150px;
+    width: 145px;
     height: 215px;
-
-    border-right-width: 5px;
-    border-right-style: solid;
-    border-right-color: gray;
 
     border-bottom-width: 5px;
     border-bottom-style: solid;
@@ -197,17 +205,16 @@
 
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
+}
+
+.panel-filled {
+    width: 145px;
+    height: 50px;
 }
 
 .panel-shape {
-    width: 150px;
-    height: 485px;
-
-    border-right-width: 5px;
-    border-right-style: solid;
-    border-right-color: gray;
+    width: 145px;
+    height: 435px;
 
     display: flex;
     flex-direction: column;

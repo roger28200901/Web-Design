@@ -7,12 +7,14 @@ window.onload = function ()
 
     var canvas = document.getElementById('canvas');
     var panelLayer = document.getElementById('panelLayer');
+    var buttonFillShift = document.getElementById('buttonFillShift');
     var data = {
         'width': canvasWidth,
         'height': canvasHeight,
         'backgroundColor': canvasBackgroundColor,
         'canvas': canvas,
         'panelLayer': panelLayer,
+        'buttonFillShift': buttonFillShift,
     };
 
     var canvasPanel = new CanvasPanel(data);

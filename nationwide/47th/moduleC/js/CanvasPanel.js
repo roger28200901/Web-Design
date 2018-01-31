@@ -6,6 +6,7 @@ var CanvasPanel = function (data)
     this.backgroundColor = data.backgroundColor || 'white';
     this.canvas = data.canvas || null;
     this.panelLayer = data.panelLayer || null;
+    this.buttonFillShift = data.buttonFillShift || null;
 
     this.canvas.width = this.width;
     this.canvas.height = this.height;
@@ -24,6 +25,7 @@ var CanvasPanel = function (data)
     this.currentLine = null;
     this.currentIllustration = null;
     this.numberOfAngles = null;
+    this.isFilled = false;
 
     this.activeShape = null;
     this.activeLayer = null;
@@ -55,6 +57,10 @@ CanvasPanel.prototype.init = function ()
         canvasPanel.newLayer();
     });
 
+canvasPanel.buttonFillShift.addEventListener('click', function (event) {
+    canvasPanel.fillShift();
+});
+
 canvasPanel.canvas.addEventListener('mousedown', function (event) {
     var mouse = canvasPanel.getMouse(event);
     switch (canvasPanel.currentMode) {
@@ -76,6 +82,7 @@ canvasPanel.canvas.addEventListener('mousedown', function (event) {
                 'numberOfAngles': canvasPanel.numberOfAngles,
                 'shape': canvasPanel.currentShape,
                 'illustration': canvasPanel.currentIllustration,
+                'isFilled': canvasPanel.isFilled,
             });
             if ('shape' === canvasPanel.currentMode) {
             }
@@ -136,6 +143,16 @@ CanvasPanel.prototype.keyup = function (event)
             this.activeShape.withCtrl = false;
         }
         this.refresh = true;
+    }
+}
+
+CanvasPanel.prototype.fillShift = function ()
+{
+    this.isFilled = !this.isFilled;
+    console.log(this.isFilled);
+    this.buttonFillShift.textContent = '空心';
+    if (this.isFilled) {
+        this.buttonFillShift.textContent = '填滿';
     }
 }
 
@@ -207,8 +224,8 @@ CanvasPanel.prototype.initShapes = function ()
     shapes.forEach(function (shape, index) {
         var imageShape = document.createElement('img');
         imageShape.classList.add('component');
-        imageShape.style.width = '100px';
-        imageShape.style.height = '100px';
+        imageShape.style.width = '90px';
+        imageShape.style.height = '90px';
         imageShape.src = shapeUrls[index];
         imageShape.dataset.shape = shape;
 
