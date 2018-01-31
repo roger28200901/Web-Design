@@ -29,6 +29,9 @@ var CanvasPanel = function (data)
 
     this.activeShape = null;
     this.activeLayer = null;
+    this.moveShape = null;
+    this.offsetLeft = null;
+    this.offsetTop = null;
 
     this.refresh = false;
 
@@ -60,6 +63,16 @@ canvasPanel.canvas.addEventListener('mousedown', function (event) {
     var mouse = canvasPanel.getMouse(event);
     switch (canvasPanel.currentMode) {
         case 'choose':
+            if (canvasPanel.activeLayer) {
+                canvasPanel.activeLayer.shapes.forEach(function (shape) {   
+                    if (shape.contain(mouse)) {
+                        canvasPanel.moveShape = shape;
+                        canvasPanel.offsetLeft = mouse.x - shape.start.x;
+                        canvasPanel.offsetTop = mouse.y - shape.start.y;
+                        return;
+                    }
+                });
+            }
             break;
         case 'paint-bucket':
             canvasPanel.newLayer();
@@ -74,12 +87,16 @@ canvasPanel.canvas.addEventListener('mousedown', function (event) {
                 'mode': canvasPanel.currentMode,
                 'color': canvasPanel.currentColor,
                 'line': canvasPanel.currentLine,
-                'points': [mouse],
+                'points': [new Point({})],
                 'numberOfAngles': canvasPanel.numberOfAngles,
                 'shape': canvasPanel.currentShape,
                 'illustration': canvasPanel.currentIllustration,
                 'isFilled': canvasPanel.isFilled,
             });
+            if ('illustration' === shape.mode) {
+                shape.width = canvasPanel.currentIllustration.width;
+                shape.height = canvasPanel.currentIllustration.height;
+            }
             canvasPanel.activeShape = shape;
             canvasPanel.newLayer();
             canvasPanel.activeLayer.shapes.push(shape);
@@ -97,24 +114,35 @@ canvasPanel.canvas.addEventListener('mousemove', function (event) {
             case 'paint-bucket':
                 break;
             case 'brush':
-                canvasPanel.activeShape.points.push(mouse);
+                canvasPanel.activeShape.points.push(new Point({
+                    'x': mouse.x - canvasPanel.activeShape.start.x,
+                    'y': mouse.y - canvasPanel.activeShape.start.y,
+                }));
             case 'line':
             case 'shape':
+            case 'illustration':
                 canvasPanel.activeShape.end = mouse;
                 break;
-            case 'illustration':
-                canvasPanel.activeShape.start = mouse;
-                canvasPanel.activeShape.end.x = mouse.x + canvasPanel.currentIllustration.width;
-                canvasPanel.activeShape.end.y = mouse.y + canvasPanel.currentIllustration.height;
-                break;
         }
+        canvasPanel.refresh = true;
+        return;
+    }
+    if (canvasPanel.moveShape) {
+        var mouse = canvasPanel.getMouse(event);
+        mouse.x -= canvasPanel.offsetLeft;
+        mouse.y -= canvasPanel.offsetTop;
+        canvasPanel.moveShape.end.x = canvasPanel.moveShape.end.x - canvasPanel.moveShape.start.x + mouse.x;
+        canvasPanel.moveShape.end.y = canvasPanel.moveShape.end.y - canvasPanel.moveShape.start.y + mouse.y;
+        canvasPanel.moveShape.start = mouse;
         canvasPanel.refresh = true;
     }
 });
 
 canvasPanel.canvas.addEventListener('mouseup', function (event) {
-    canvasPanel.activeLayer = null;
     canvasPanel.activeShape = null;
+    canvasPanel.moveShape = null;
+    canvasPanel.offsetLeft = null;
+    canvasPanel.offsetTop = null;
 });
 
 }
@@ -146,7 +174,6 @@ CanvasPanel.prototype.keyup = function (event)
 CanvasPanel.prototype.fillShift = function ()
 {
     this.isFilled = !this.isFilled;
-    console.log(this.isFilled);
     this.buttonFillShift.textContent = '空心';
     if (this.isFilled) {
         this.buttonFillShift.textContent = '填滿';
@@ -369,6 +396,7 @@ CanvasPanel.prototype.newLayer = function ()
 CanvasPanel.prototype.setMode = function (mode)
 {
     this.cancelModes();
+    this.cancelLayers();
     this.currentMode = mode.dataset.mode;
     switch (this.currentMode) {
         case 'choose':
@@ -411,6 +439,7 @@ CanvasPanel.prototype.setMode = function (mode)
             break;
     }
     mode.style.borderColor = '#315';
+    this.refresh = true;
 }
 
 CanvasPanel.prototype.setShape = function (shape)
@@ -423,7 +452,7 @@ CanvasPanel.prototype.setShape = function (shape)
             var message = message || '請輸入多邊形邊數 N (N > 2)';
         case 'star':
             var message = message || '請輸入星形頂點數 V (V > 2)';
-            this.numberOfAngles = Math.max(parseInt(prompt(message)) || 3, 3);
+            this.numberOfAngles = Math.min(Math.max(parseInt(prompt(message)) || 3, 3), 100);
             break;
     }
     shape.style.borderColor = '#315';

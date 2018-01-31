@@ -15,6 +15,9 @@ var Shape = function (data)
     this.withShift = false;
     this.withCtrl = false;
 
+    this.width = 0;
+    this.height = 0;
+
     this.leftTop = new Point({});
     this.rightBottom = new Point({});
 }
@@ -24,9 +27,10 @@ Shape.prototype.draw = function (context)
     context.beginPath();
     switch (this.mode) {
         case 'brush':
-            this.points.forEach(function (point) {
-                context.lineTo(point.x, point.y);
-                context.moveTo(point.x, point.y);
+            var shape = this;
+            shape.points.forEach(function (point) {
+                context.lineTo(shape.start.x + point.x, shape.start.y + point.y);
+                context.moveTo(shape.start.x + point.x, shape.start.y + point.y);
             });
             break;
         case 'line':
@@ -107,7 +111,7 @@ Shape.prototype.draw = function (context)
             }
             break;
         case 'illustration':
-            context.drawImage(this.illustration, this.start.x, this.start.y);
+            context.drawImage(this.illustration, this.end.x, this.end.y, this.width, this.height);
             break;
     }
     context.closePath();
@@ -131,6 +135,12 @@ Shape.prototype.focus = function (context)
     context.stroke();
 }
 
+Shape.prototype.contain = function (point)
+{
+    this.getBound();
+    return point.x >= this.leftTop.x && point.x <= this.rightBottom.x && point.y >= this.leftTop.y && point.y <= this.rightBottom.y;
+}
+
 Shape.prototype.getBound = function ()
 {
     var shape = this;
@@ -138,10 +148,10 @@ Shape.prototype.getBound = function ()
     shape.rightBottom = new Point(shape.end);
     if ('brush' === shape.mode) {
         shape.points.forEach(function (point) {
-            shape.leftTop.x = Math.min(shape.leftTop.x, point.x);
-            shape.leftTop.y = Math.min(shape.leftTop.y, point.y);
-            shape.rightBottom.x = Math.max(shape.rightBottom.x, point.x);
-            shape.rightBottom.y = Math.max(shape.rightBottom.y, point.y);
+            shape.leftTop.x = Math.min(shape.leftTop.x, shape.start.x + point.x);
+            shape.leftTop.y = Math.min(shape.leftTop.y, shape.start.y + point.y);
+            shape.rightBottom.x = Math.max(shape.rightBottom.x, shape.start.x + point.x);
+            shape.rightBottom.y = Math.max(shape.rightBottom.y, shape.start.y + point.y);
         });
         return;
     }
@@ -180,10 +190,16 @@ Shape.prototype.getBound = function ()
             shape.rightBottom.y = shape.start.y + radius;
             return;
         }
-        shape.leftTop.x = shape.start.x + radius * width / height;
-        shape.rightBottom.x = shape.start.x - radius * width / height;
-        shape.leftTop.y = shape.start.y + radius * height / width;
-        shape.rightBottom.y = shape.start.y - radius * height / width;
+        shape.leftTop.x = shape.start.x - radius * width / height;
+        shape.rightBottom.x = shape.start.x + radius * width / height;
+        shape.leftTop.y = shape.start.y - radius * height / width;
+        shape.rightBottom.y = shape.start.y + radius * height / width;
         return;
+    }
+
+    if ('illustration' === shape.mode) {
+        this.leftTop = new Point(this.end);
+        this.rightBottom.x = this.leftTop.x + this.width;
+        this.rightBottom.y = this.leftTop.y + this.height;
     }
 }
