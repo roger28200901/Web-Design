@@ -27,9 +27,7 @@ var Shape = function (data)
     this.scaleX = 1;
     this.scaleY = 1;
 
-    this.imageData = null;
-    this.count = 5000;
-    this.fillStart = new Point({});
+    this.fillColor = null;
 }
 
 Shape.prototype.draw = function (context)
@@ -42,25 +40,21 @@ Shape.prototype.draw = function (context)
                 var offset = (this.start.y * this.boundX + this.start.x) * 4;
                 var originalColor = this.imageData.data.slice(offset, offset + 4);
                 this.fillStart = this.start;
-                var times = 0;
-                while (times++ < 500 && 5000 <= this.count) {
-                    console.log('start');
-                    this.count = 0;
-                    this.fill(this.fillStart.x, this.fillStart.y, originalColor, context);
-                }
+                context.fillStyle = this.color;
+                context.fillRect(this.start.x, this.start.y, 1, 1);
+                context.fill();
+                this.fillColor = context.getImageData(this.start.x, this.start.y, 1, 1).data;
+                this.fill(this.fillStart.x, this.fillStart.y, originalColor);
+            } else {
+                var shape = this;
+                shape.points.forEach(function (point) {
+                    var offset = (point.y * shape.boundX + point.x) * 4;
+                    for (var i = 0; i < 3; i++) {
+                        shape.imageData.data[offset + i] = shape.fillColor[i];
+                    }
+                });
             }
-            var shape = this;
-            context.fillStyle = shape.color;
-            context.fillRect(shape.start.x, shape.start.y, 1, 1);
-            context.fill();
-            var fillColor = context.getImageData(shape.start.x, shape.start.y, 1, 1).data;
-            shape.points.forEach(function (point) {
-                var offset = (point.y * shape.boundX + point.x) * 4;
-                for (var i = 0; i < 3; i++) {
-                    shape.imageData.data[offset + i] = fillColor[i];
-                }
-            });
-            context.putImageData(shape.imageData, 0, 0);
+            context.putImageData(this.imageData, 0, 0);
             break;
         case 'brush':
             var shape = this;
@@ -270,40 +264,57 @@ Shape.prototype.resize = function (mouse)
     }
 }
 
-Shape.prototype.fill = function (x, y, originalColor, context)
+Shape.prototype.fill = function (x, y, originalColor,)
 {
-    console.log('test');
-    this.complete = true;
-    if (x < 0 || x > this.boundX || y < 0 || y > this.boundY) {
-        return;
-    }
-
-    var offset = (y * this.boundX + x) * 4;
-    for (var i = 0; i < 3; i++) {
-        if (50 < Math.abs(this.imageData.data[offset + i] - originalColor[i])) {
-            return;
-        }
-    }
-
-    var point = new Point({
+    var shape = this;
+    var pointStack = [new Point({
         'x': x,
         'y': y,
-    });
+    })];
 
-    this.count++;
-    if (this.count > 5000) {
-        this.fillStart = point;
-        return;
+    var directions = [
+        new Point({'x': -1, 'y': 0}),
+        new Point({'x': 0, 'y': -1}),
+        new Point({'x': 1, 'y': 0}),
+        new Point({'x': 0, 'y': 1}),
+    ];
+
+    while (pointStack.length) {
+        var isValid = false;
+        directions.forEach(function (direction) {
+            if (isValid) {
+                return;
+            }
+            var nextX = x + direction.x;
+            var nextY = y + direction.y;
+            if (nextX < 0 || nextX > shape.boundX || nextY < 0 || nextY > shape.boundY) {
+                return;
+            }
+            var offset = (nextY * shape.boundX + nextX) * 4;
+            isValid = true;
+            for (var i = 0; i < 3; i++) {
+                if (shape.imageData.data[offset + i] !== originalColor[i]) {
+                    isValid = false;
+                    break;
+                }
+            }
+            if (isValid) {
+                for (var i = 0; i < 3; i++) {
+                    shape.imageData.data[offset + i] = shape.fillColor[i];
+                }
+                pointStack.push(new Point({'x': nextX, 'y': nextY}));
+                return;
+            }
+        });
+
+        if (isValid) {
+            x = pointStack[pointStack.length - 1].x;
+            y = pointStack[pointStack.length - 1].y;
+        } else {
+            var point = pointStack.pop();
+            x = point.x;
+            y = point.y;
+            shape.points.push(new Point({'x': x, 'y': y}));
+        }
     }
-
-    for (var i = 0; i < 3; i++) {
-        this.imageData.data[offset + i] = -1;
-    }
-
-    this.points.push(point);
-
-    this.fill(x - 1, y, originalColor, context);
-    this.fill(x, y - 1, originalColor, context);
-    this.fill(x + 1, y, originalColor, context);
-    this.fill(x, y + 1, originalColor, context);
 }
