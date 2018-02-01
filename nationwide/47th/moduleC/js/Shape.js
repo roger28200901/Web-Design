@@ -1,6 +1,8 @@
 /* Shape */
 var Shape = function (data)
 {
+    this.boundX = data.boundX || 800;
+    this.boundY = data.boundY || 600;
     this.start = data.start || new Point({});
     this.end = data.end || new Point({});
     this.mode = data.mode || '';
@@ -20,12 +22,32 @@ var Shape = function (data)
 
     this.leftTop = new Point({});
     this.rightBottom = new Point({});
+
+    this.anchors = [new Anchor({}), new Anchor({}), new Anchor({}), new Anchor({})];
+    this.scaleX = 1;
+    this.scaleY = 1;
+
+    this.imageData = null;
+    this.count = 0;
 }
 
 Shape.prototype.draw = function (context)
 {
     context.beginPath();
     switch (this.mode) {
+        case 'paint-bucket':
+            if (!this.points.length) {
+                this.imageData = context.getImageData(0, 0, this.boundX, this.boundY);
+                var fillData = context.getImageData(this.start.x, this.start.y, 1, 1);
+                this.fill(this.start.x, this.start.y, fillData, context);
+            }
+            var shape = this;
+            shape.points.forEach(function (point) {
+                context.fillStyle = shape.color;
+                context.fillRect(point.x, point.y, 1, 1);
+                context.fill();
+            });
+            break;
         case 'brush':
             var shape = this;
             shape.points.forEach(function (point) {
@@ -126,7 +148,8 @@ Shape.prototype.draw = function (context)
 
 Shape.prototype.focus = function (context)
 {
-    this.getBound();
+    this.setBound();
+    this.setAnchors();
     context.beginPath();
     context.rect(this.leftTop.x, this.leftTop.y, this.rightBottom.x - this.leftTop.x, this.rightBottom.y - this.leftTop.y);
     context.closePath();
@@ -137,11 +160,12 @@ Shape.prototype.focus = function (context)
 
 Shape.prototype.contain = function (point)
 {
-    this.getBound();
+    this.setBound();
+    this.setAnchors();
     return point.x >= this.leftTop.x && point.x <= this.rightBottom.x && point.y >= this.leftTop.y && point.y <= this.rightBottom.y;
 }
 
-Shape.prototype.getBound = function ()
+Shape.prototype.setBound = function ()
 {
     var shape = this;
     shape.leftTop = new Point(shape.start);
@@ -202,4 +226,61 @@ Shape.prototype.getBound = function ()
         this.rightBottom.x = this.leftTop.x + this.width;
         this.rightBottom.y = this.leftTop.y + this.height;
     }
+}
+
+Shape.prototype.setAnchors = function ()
+{
+    this.anchors[0].point.x = this.leftTop.x;
+    this.anchors[0].point.y = this.leftTop.y;
+    this.anchors[1].point.x = this.rightBottom.x;
+    this.anchors[1].point.y = this.leftTop.y;
+    this.anchors[2].point.x = this.rightBottom.x;
+    this.anchors[2].point.y = this.rightBottom.y;
+    this.anchors[3].point.x = this.leftTop.x;
+    this.anchors[3].point.y = this.rightBottom.y;
+}
+
+Shape.prototype.resize = function (mouse)
+{
+    this.width = this.rightBottom.x - this.leftTop.x;
+    this.height = this.rightBottom.y - this.leftTop.y;
+    if (Math.abs(mouse.x - this.leftTop.x) > Math.abs(mouse.x - this.rightBottom.x)) {
+        this.scaleX = 1 + (mouse.x - this.rightBottom.x) / this.width;
+    } else {
+        this.scaleX = 1 + (this.leftTop.x - mouse.x) / this.width;
+    }
+    if (Math.abs(mouse.y - this.leftTop.y) > Math.abs(mouse.y - this.rightBottom.y)) {
+        this.scaleY = 1 + (mouse.y - this.rightBottom.y) / this.height;
+    } else {
+        this.scaleY = 1 + (this.leftTop.y - mouse.y) / this.height;
+    }
+}
+
+Shape.prototype.fill = function (x, y, fillData, context)
+{
+    if (x < 0 || x > this.boundX || y < 0 || y > this.boundY) {
+        return;
+    }
+
+    var offset = (y * this.boundX + x) * 4;
+    for (var i = 0; i < 3; i++) {
+        if (this.imageData.data[offset + i] !== fillData.data[i]) {
+            return;
+        }
+    }
+
+    for (var i = 0; i < 3; i++) {
+        this.imageData.data[offset + i] = -1;
+    }
+
+    var point = new Point({
+        'x': x,
+        'y': y,
+    });
+    this.points.push(point);
+
+    this.fill(x - 1, y, fillData, context);
+    this.fill(x, y - 1, fillData, context);
+    this.fill(x + 1, y, fillData, context);
+    this.fill(x, y + 1, fillData, context);
 }

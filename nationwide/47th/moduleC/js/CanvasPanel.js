@@ -33,6 +33,7 @@ var CanvasPanel = function (data)
     this.offsetLeft = null;
     this.offsetTop = null;
 
+    this.resize = false;
     this.refresh = false;
 
     this.init();
@@ -61,80 +62,82 @@ canvasPanel.buttonFillShift.addEventListener('click', function (event) {
 
 canvasPanel.canvas.addEventListener('mousedown', function (event) {
     var mouse = canvasPanel.getMouse(event);
-    switch (canvasPanel.currentMode) {
-        case 'choose':
-            if (canvasPanel.activeLayer) {
-                canvasPanel.activeLayer.shapes.forEach(function (shape) {   
+    if ('choose' === canvasPanel.currentMode) {
+        if (canvasPanel.activeLayer) {
+            canvasPanel.activeLayer.shapes.forEach(function (shape) {
+                shape.anchors.forEach(function (anchor) {
+                    if (anchor.contain(mouse)) {
+                        canvasPanel.moveShape = shape;
+                        canvasPanel.resize = true;
+                        return;
+                    }
+                });
+                if (!canvasPanel.resize) {
                     if (shape.contain(mouse)) {
                         canvasPanel.moveShape = shape;
                         canvasPanel.offsetLeft = mouse.x - shape.start.x;
                         canvasPanel.offsetTop = mouse.y - shape.start.y;
                         return;
                     }
-                });
-            }
-            break;
-        case 'paint-bucket':
-            canvasPanel.newLayer();
-            break;
-        case 'brush':
-        case 'line':
-        case 'shape':
-        case 'illustration':
-            var shape = new Shape({
-                'start': mouse,
-                'end': mouse,
-                'mode': canvasPanel.currentMode,
-                'color': canvasPanel.currentColor,
-                'line': canvasPanel.currentLine,
-                'points': [new Point({})],
-                'numberOfAngles': canvasPanel.numberOfAngles,
-                'shape': canvasPanel.currentShape,
-                'illustration': canvasPanel.currentIllustration,
-                'isFilled': canvasPanel.isFilled,
+                }
             });
-            if ('illustration' === shape.mode) {
-                shape.width = canvasPanel.currentIllustration.width;
-                shape.height = canvasPanel.currentIllustration.height;
-            }
-            canvasPanel.activeShape = shape;
-            canvasPanel.newLayer();
-            canvasPanel.activeLayer.shapes.push(shape);
-            break;
+        }
+    } else {
+        var shape = new Shape({
+            'boundX': canvasPanel.width,
+            'boundY': canvasPanel.height,
+            'start': mouse,
+            'end': mouse,
+            'mode': canvasPanel.currentMode,
+            'color': canvasPanel.currentColor,
+            'line': canvasPanel.currentLine,
+            'points': [new Point({})],
+            'numberOfAngles': canvasPanel.numberOfAngles,
+            'shape': canvasPanel.currentShape,
+            'illustration': canvasPanel.currentIllustration,
+            'isFilled': canvasPanel.isFilled,
+        });
+        if ('illustration' === shape.mode) {
+            shape.width = canvasPanel.currentIllustration.width;
+            shape.height = canvasPanel.currentIllustration.height;
+        } else if ('paint-bucket' === shape.mode) {
+            shape.points.pop();
+            shape.isFilled = true;
+        }
+        canvasPanel.activeShape = shape;
+        canvasPanel.newLayer();
+        canvasPanel.activeLayer.shapes.push(shape);
     }
     canvasPanel.refresh = true;
 });
 
 canvasPanel.canvas.addEventListener('mousemove', function (event) {
+    var mouse = canvasPanel.getMouse(event);
     if (canvasPanel.activeShape) {
-        var mouse = canvasPanel.getMouse(event);
-        switch (canvasPanel.activeShape.mode) {
-            case 'choose':
-                break;
-            case 'paint-bucket':
-                break;
-            case 'brush':
-                canvasPanel.activeShape.points.push(new Point({
-                    'x': mouse.x - canvasPanel.activeShape.start.x,
-                    'y': mouse.y - canvasPanel.activeShape.start.y,
-                }));
-            case 'line':
-            case 'shape':
-            case 'illustration':
-                canvasPanel.activeShape.end = mouse;
-                break;
+        if ('brush' === canvasPanel.activeShape.mode) {
+            canvasPanel.activeShape.points.push(new Point({
+                'x': mouse.x - canvasPanel.activeShape.start.x,
+                'y': mouse.y - canvasPanel.activeShape.start.y,
+            }));
+        } else {
+            canvasPanel.activeShape.end = mouse;
         }
         canvasPanel.refresh = true;
         return;
     }
+    mouse.x -= canvasPanel.offsetLeft;
+    mouse.y -= canvasPanel.offsetTop;
+    if (canvasPanel.resize) {
+        canvasPanel.moveShape.resize(mouse);
+        canvasPanel.refresh = true;
+        return;
+    }
     if (canvasPanel.moveShape) {
-        var mouse = canvasPanel.getMouse(event);
-        mouse.x -= canvasPanel.offsetLeft;
-        mouse.y -= canvasPanel.offsetTop;
         canvasPanel.moveShape.end.x = canvasPanel.moveShape.end.x - canvasPanel.moveShape.start.x + mouse.x;
         canvasPanel.moveShape.end.y = canvasPanel.moveShape.end.y - canvasPanel.moveShape.start.y + mouse.y;
         canvasPanel.moveShape.start = mouse;
         canvasPanel.refresh = true;
+        return;
     }
 });
 
@@ -143,6 +146,7 @@ canvasPanel.canvas.addEventListener('mouseup', function (event) {
     canvasPanel.moveShape = null;
     canvasPanel.offsetLeft = null;
     canvasPanel.offsetTop = null;
+    canvasPanel.resize = false;
 });
 
 }
@@ -346,7 +350,7 @@ CanvasPanel.prototype.initLines = function ()
 CanvasPanel.prototype.initIllustrations = function ()
 {
     var illustrations = ['C', 'H', 'A', 'M', 'P', 'I', 'O', 'N'];
-    var illustrationUrls = ['img/C.png', 'img/H.png', 'img/A.png', 'img/N.png', 'img/P.png', 'img/I.png', 'img/O.png', 'img/N.png'];
+    var illustrationUrls = ['img/C.png', 'img/H.png', 'img/A.png', 'img/M.png', 'img/P.png', 'img/I.png', 'img/O.png', 'img/N.png'];
 
     var panelIllustration = document.getElementById('panelIllustration');
     var canvasPanel = this;
@@ -402,7 +406,9 @@ CanvasPanel.prototype.setMode = function (mode)
         case 'choose':
         case 'paint-bucket':
             this.cancelShapes();
-            this.cancelColors();
+            if (!this.currentColor) {
+                this.setColor(this.colors[0]);
+            }
             this.cancelLines();
             this.cancelIllustrations();
             break;
@@ -460,7 +466,7 @@ CanvasPanel.prototype.setShape = function (shape)
 
 CanvasPanel.prototype.setColor = function (color)
 {
-    if ('brush' === this.currentMode || 'line' === this.currentMode || 'shape' === this.currentMode) {
+    if ('brush' === this.currentMode || 'paint-bucket' === this.currentMode || 'line' === this.currentMode || 'shape' === this.currentMode) {
         this.cancelColors();
         this.currentColor = color.dataset.color;
         color.style.borderColor = '#dae';
