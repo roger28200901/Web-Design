@@ -28,7 +28,8 @@ var Shape = function (data)
     this.scaleY = 1;
 
     this.imageData = null;
-    this.count = 0;
+    this.count = 5000;
+    this.fillStart = new Point({});
 }
 
 Shape.prototype.draw = function (context)
@@ -38,10 +39,15 @@ Shape.prototype.draw = function (context)
         case 'paint-bucket':
             this.imageData = context.getImageData(0, 0, this.boundX, this.boundY);
             if (!this.points.length) {
-                console.log('start');
                 var offset = (this.start.y * this.boundX + this.start.x) * 4;
                 var originalColor = this.imageData.data.slice(offset, offset + 4);
-                this.fill(this.start.x, this.start.y, originalColor, context);
+                this.fillStart = this.start;
+                var times = 0;
+                while (times++ < 500 && 5000 <= this.count) {
+                    console.log('start');
+                    this.count = 0;
+                    this.fill(this.fillStart.x, this.fillStart.y, originalColor, context);
+                }
             }
             var shape = this;
             context.fillStyle = shape.color;
@@ -266,25 +272,34 @@ Shape.prototype.resize = function (mouse)
 
 Shape.prototype.fill = function (x, y, originalColor, context)
 {
+    console.log('test');
+    this.complete = true;
     if (x < 0 || x > this.boundX || y < 0 || y > this.boundY) {
         return;
     }
 
     var offset = (y * this.boundX + x) * 4;
     for (var i = 0; i < 3; i++) {
-        if (this.imageData.data[offset + i] !== originalColor[i]) {
+        if (50 < Math.abs(this.imageData.data[offset + i] - originalColor[i])) {
             return;
         }
-    }
-
-    for (var i = 0; i < 3; i++) {
-        this.imageData.data[offset + i] = -1;
     }
 
     var point = new Point({
         'x': x,
         'y': y,
     });
+
+    this.count++;
+    if (this.count > 5000) {
+        this.fillStart = point;
+        return;
+    }
+
+    for (var i = 0; i < 3; i++) {
+        this.imageData.data[offset + i] = -1;
+    }
+
     this.points.push(point);
 
     this.fill(x - 1, y, originalColor, context);
