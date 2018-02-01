@@ -36,17 +36,25 @@ Shape.prototype.draw = function (context)
     context.beginPath();
     switch (this.mode) {
         case 'paint-bucket':
+            this.imageData = context.getImageData(0, 0, this.boundX, this.boundY);
             if (!this.points.length) {
-                this.imageData = context.getImageData(0, 0, this.boundX, this.boundY);
-                var fillData = context.getImageData(this.start.x, this.start.y, 1, 1);
-                this.fill(this.start.x, this.start.y, fillData, context);
+                console.log('start');
+                var offset = (this.start.y * this.boundX + this.start.x) * 4;
+                var originalColor = this.imageData.data.slice(offset, offset + 4);
+                this.fill(this.start.x, this.start.y, originalColor, context);
             }
             var shape = this;
+            context.fillStyle = shape.color;
+            context.fillRect(shape.start.x, shape.start.y, 1, 1);
+            context.fill();
+            var fillColor = context.getImageData(shape.start.x, shape.start.y, 1, 1).data;
             shape.points.forEach(function (point) {
-                context.fillStyle = shape.color;
-                context.fillRect(point.x, point.y, 1, 1);
-                context.fill();
+                var offset = (point.y * shape.boundX + point.x) * 4;
+                for (var i = 0; i < 3; i++) {
+                    shape.imageData.data[offset + i] = fillColor[i];
+                }
             });
+            context.putImageData(shape.imageData, 0, 0);
             break;
         case 'brush':
             var shape = this;
@@ -256,7 +264,7 @@ Shape.prototype.resize = function (mouse)
     }
 }
 
-Shape.prototype.fill = function (x, y, fillData, context)
+Shape.prototype.fill = function (x, y, originalColor, context)
 {
     if (x < 0 || x > this.boundX || y < 0 || y > this.boundY) {
         return;
@@ -264,7 +272,7 @@ Shape.prototype.fill = function (x, y, fillData, context)
 
     var offset = (y * this.boundX + x) * 4;
     for (var i = 0; i < 3; i++) {
-        if (this.imageData.data[offset + i] !== fillData.data[i]) {
+        if (this.imageData.data[offset + i] !== originalColor[i]) {
             return;
         }
     }
@@ -279,8 +287,8 @@ Shape.prototype.fill = function (x, y, fillData, context)
     });
     this.points.push(point);
 
-    this.fill(x - 1, y, fillData, context);
-    this.fill(x, y - 1, fillData, context);
-    this.fill(x + 1, y, fillData, context);
-    this.fill(x, y + 1, fillData, context);
+    this.fill(x - 1, y, originalColor, context);
+    this.fill(x, y - 1, originalColor, context);
+    this.fill(x + 1, y, originalColor, context);
+    this.fill(x, y + 1, originalColor, context);
 }
