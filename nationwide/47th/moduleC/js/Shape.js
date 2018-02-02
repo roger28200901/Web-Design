@@ -26,13 +26,18 @@ var Shape = function (data)
     this.anchors = [new Anchor({}), new Anchor({}), new Anchor({}), new Anchor({})];
     this.scaleX = 1;
     this.scaleY = 1;
+    this.scaleShift = false;
 
     this.fillColor = null;
 }
 
 Shape.prototype.draw = function (context)
 {
+    this.setBound();
     context.beginPath();
+    var center = new Point({});
+    center.x = (this.leftTop.x + this.rightBottom.x) / 2;
+    center.y = (this.leftTop.y + this.rightBottom.y) / 2;
     switch (this.mode) {
         case 'paint-bucket':
             this.imageData = context.getImageData(0, 0, this.boundX, this.boundY);
@@ -64,36 +69,46 @@ Shape.prototype.draw = function (context)
         case 'brush':
             var shape = this;
             shape.points.forEach(function (point) {
-                context.lineTo(shape.start.x + point.x, shape.start.y + point.y);
-                context.moveTo(shape.start.x + point.x, shape.start.y + point.y);
+                var x = ((shape.start.x + point.x) - center.x) * shape.scaleX;
+                var y = ((shape.start.y + point.y) - center.y) * shape.scaleY;
+                context.lineTo(x + center.x, y + center.y);
+                context.moveTo(x + center.x, y + center.y);
             });
             break;
         case 'line':
-            context.moveTo(this.start.x, this.start.y);
+            var x = center.x + (this.start.x - center.x) * this.scaleX;
+            var y = center.y + (this.start.y - center.y) * this.scaleY;
+            context.moveTo(x, y);
             if (this.withShift) {
                 var distanceX = Math.abs(this.end.x - this.start.x);
                 var distanceY = Math.abs(this.end.y - this.start.y);
                 if (distanceX > distanceY) {
-                    context.lineTo(this.end.x, this.start.y);
+                    x = center.x + (this.end.x - center.x) * this.scaleX;
+                    y = center.y + (this.start.y - center.y) * this.scaleY;
                 } else {
-                    context.lineTo(this.start.x, this.end.y);
+                    x = center.x + (this.start.x - center.x) * this.scaleX;
+                    y = center.y + (this.end.y - center.y) * this.scaleY;
                 }
             } else {
-                context.lineTo(this.end.x, this.end.y);
+                x = center.x + (this.end.x - center.x) * this.scaleX;
+                y = center.y + (this.end.y - center.y) * this.scaleY;
             }
+            context.lineTo(x, y);
             break;
         case 'shape':
             switch (this.shape) {
                 case 'oval':
-                    var width = Math.abs(this.start.x - this.end.x);
-                    var height = Math.abs(this.start.y - this.end.y);
+                    var x = center.x + (this.start.x - center.x) * this.scaleX;
+                    var y = center.y + (this.start.y - center.y) * this.scaleY;
+                    var width = Math.abs(x - (center.x + (this.end.x - center.x) * this.scaleX));
+                    var height = Math.abs(y - (center.y + (this.end.y - center.y) * this.scaleY));
 
                     context.save();
                     if (this.withShift) {
-                        context.arc(this.start.x, this.start.y, width, 0, 2 * Math.PI);
+                        context.arc(x, y, width, 0, 2 * Math.PI);
                     } else {
                         context.scale(1, height / width);
-                        context.arc(this.start.x, this.start.y / (height / width), width, 0, 2 * Math.PI);
+                        context.arc(x, y / (height / width), width, 0, 2 * Math.PI);
                     }
                     context.restore();
 
@@ -113,6 +128,8 @@ Shape.prototype.draw = function (context)
                             x = this.start.x + (x - this.start.x) * width / height;
                             y = this.start.y + (y - this.start.y) * height / width;
                         }
+                        x = center.x + (x - center.x) * this.scaleX;
+                        y = center.y + (y - center.y) * this.scaleY;
                         context.lineTo(x, y);
                     }
 
@@ -132,6 +149,8 @@ Shape.prototype.draw = function (context)
                             x = this.start.x + (x - this.start.x) * width / height;
                             y = this.start.y + (y - this.start.y) * height / width;
                         }
+                        x = center.x + (x - center.x) * this.scaleX;
+                        y = center.y + (y - center.y) * this.scaleY;
                         context.lineTo(x, y);
                         degree = angle * (i % this.numberOfAngles + 0.5) - rotate
                         x = this.start.x + radius * Math.cos(degree) / 2;
@@ -140,13 +159,17 @@ Shape.prototype.draw = function (context)
                             x = this.start.x + (x - this.start.x) * width / height;
                             y = this.start.y + (y - this.start.y) * height / width;
                         }
+                        x = center.x + (x - center.x) * this.scaleX;
+                        y = center.y + (y - center.y) * this.scaleY;
                         context.lineTo(x, y);
                     }
                     break;
             }
             break;
         case 'illustration':
-            context.drawImage(this.illustration, this.end.x, this.end.y, this.width, this.height);
+            var x = center.x + (this.end.x - center.x) * this.scaleX;
+            var y = center.y + (this.end.y - center.y) * this.scaleY;
+            context.drawImage(this.illustration, x, y, this.width * this.scaleX, this.height * this.scaleY);
             break;
     }
     context.closePath();
@@ -163,8 +186,17 @@ Shape.prototype.focus = function (context)
 {
     this.setBound();
     this.setAnchors();
+    var center = new Point({});
+    center.x = (this.leftTop.x + this.rightBottom.x) / 2;
+    center.y = (this.leftTop.y + this.rightBottom.y) / 2;
+    var tempLeftTop = new Point({});
+    var tempRightBottom = new Point({});
+    tempLeftTop.x = center.x + (this.leftTop.x - center.x) * this.scaleX;
+    tempLeftTop.y = center.y + (this.leftTop.y - center.y) * this.scaleY;
+    tempRightBottom.x = center.x + (this.rightBottom.x - center.x) * this.scaleX;
+    tempRightBottom.y = center.y + (this.rightBottom.y - center.y) * this.scaleY;
     context.beginPath();
-    context.rect(this.leftTop.x, this.leftTop.y, this.rightBottom.x - this.leftTop.x, this.rightBottom.y - this.leftTop.y);
+    context.rect(tempLeftTop.x, tempLeftTop.y, tempRightBottom.x - tempLeftTop.x, tempRightBottom.y - tempLeftTop.y);
     context.closePath();
     context.lineWidth = 5;
     context.strokeStyle = 'red';
@@ -175,7 +207,16 @@ Shape.prototype.contain = function (point)
 {
     this.setBound();
     this.setAnchors();
-    return point.x >= this.leftTop.x && point.x <= this.rightBottom.x && point.y >= this.leftTop.y && point.y <= this.rightBottom.y;
+    var center = new Point({});
+    center.x = (this.leftTop.x + this.rightBottom.x) / 2;
+    center.y = (this.leftTop.y + this.rightBottom.y) / 2;
+    var tempLeftTop = new Point({});
+    var tempRightBottom = new Point({});
+    tempLeftTop.x = center.x + (this.leftTop.x - center.x) * this.scaleX;
+    tempLeftTop.y = center.y + (this.leftTop.y - center.y) * this.scaleY;
+    tempRightBottom.x = center.x + (this.rightBottom.x - center.x) * this.scaleX;
+    tempRightBottom.y = center.y + (this.rightBottom.y - center.y) * this.scaleY;
+    return point.x >= tempLeftTop.x && point.x <= tempRightBottom.x && point.y >= tempLeftTop.y && point.y <= tempRightBottom.y;
 }
 
 Shape.prototype.setBound = function ()
@@ -245,14 +286,23 @@ Shape.prototype.setBound = function ()
 
 Shape.prototype.setAnchors = function ()
 {
-    this.anchors[0].point.x = this.leftTop.x;
-    this.anchors[0].point.y = this.leftTop.y;
-    this.anchors[1].point.x = this.rightBottom.x;
-    this.anchors[1].point.y = this.leftTop.y;
-    this.anchors[2].point.x = this.rightBottom.x;
-    this.anchors[2].point.y = this.rightBottom.y;
-    this.anchors[3].point.x = this.leftTop.x;
-    this.anchors[3].point.y = this.rightBottom.y;
+    var center = new Point({});
+    center.x = (this.leftTop.x + this.rightBottom.x) / 2;
+    center.y = (this.leftTop.y + this.rightBottom.y) / 2;
+    var tempLeftTop = new Point({});
+    var tempRightBottom = new Point({});
+    tempLeftTop.x = center.x + (this.leftTop.x - center.x) * this.scaleX;
+    tempLeftTop.y = center.y + (this.leftTop.y - center.y) * this.scaleY;
+    tempRightBottom.x = center.x + (this.rightBottom.x - center.x) * this.scaleX;
+    tempRightBottom.y = center.y + (this.rightBottom.y - center.y) * this.scaleY;
+    this.anchors[0].point.x = tempLeftTop.x;
+    this.anchors[0].point.y = tempLeftTop.y;
+    this.anchors[1].point.x = tempRightBottom.x;
+    this.anchors[1].point.y = tempLeftTop.y;
+    this.anchors[2].point.x = tempRightBottom.x;
+    this.anchors[2].point.y = tempRightBottom.y;
+    this.anchors[3].point.x = tempLeftTop.x;
+    this.anchors[3].point.y = tempRightBottom.y;
 }
 
 Shape.prototype.resize = function (mouse)
@@ -264,6 +314,10 @@ Shape.prototype.resize = function (mouse)
     var height = (this.rightBottom.y - this.leftTop.y) / 2;
     this.scaleX = Math.abs(mouse.x - center.x) / width;
     this.scaleY = Math.abs(mouse.y - center.y) / height;
+    if (this.scaleShift) {
+        this.scaleX = Math.min(this.scaleX, this.scaleY);
+        this.scaleY = Math.min(this.scaleX, this.scaleY);
+    }
 }
 
 Shape.prototype.fill = function (x, y, originalColor)

@@ -162,6 +162,14 @@ CanvasPanel.prototype.keydown = function (event)
             this.activeShape.withCtrl = true;
         }
         this.refresh = true;
+        return;
+    }
+    if (this.resize) {
+        if (16 === event.keyCode) {
+            this.moveShape.scaleShift = true;
+        } else if (17 === event.keyCode) {
+            this.moveShape.scaleShift = true;
+        }
     }
 }
 
@@ -174,6 +182,14 @@ CanvasPanel.prototype.keyup = function (event)
             this.activeShape.withCtrl = false;
         }
         this.refresh = true;
+        return;
+    }
+    if (this.resize) {
+        if (16 === event.keyCode) {
+            this.moveShape.scaleShift = false;
+        } else if (17 === event.keyCode) {
+            this.moveShape.scaleShift = false;
+        }
     }
 }
 
