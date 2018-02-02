@@ -99,10 +99,7 @@ canvasPanel.canvas.addEventListener('mousedown', function (event) {
             'illustration': canvasPanel.currentIllustration,
             'isFilled': canvasPanel.isFilled,
         });
-        if ('illustration' === shape.mode) {
-            shape.width = canvasPanel.currentIllustration.width;
-            shape.height = canvasPanel.currentIllustration.height;
-        } else if ('paint-bucket' === shape.mode) {
+        if ('paint-bucket' === shape.mode) {
             shape.points.pop();
             shape.isFilled = true;
         }
@@ -385,6 +382,7 @@ CanvasPanel.prototype.initIllustrations = function ()
         imageIllustration.style.width = '65px';
         imageIllustration.style.height = '90px';
         imageIllustration.src = illustrationUrls[index];
+        imageIllustration.id = 'illustration' + illustration;
 
         canvasPanel.illustrations.push(imageIllustration);
 
@@ -509,7 +507,7 @@ CanvasPanel.prototype.setLine = function (line)
 CanvasPanel.prototype.setIllustration = function (illustration)
 {
     this.cancelIllustrations();
-    this.currentIllustration = illustration;
+    this.currentIllustration = illustration.id;
     this.setMode(this.modes[5]);
     illustration.style.borderColor = '#315';
 }
@@ -574,4 +572,61 @@ CanvasPanel.prototype.cancelLayers = function ()
     });
 
     this.activeLayer = null;
+}
+
+CanvasPanel.prototype.storeAsImage = function ()
+{
+    var data = this.canvas.toDataURL('image/jpeg');
+    var a = document.createElement('a');
+    a.href = data;
+    a.download = '繪圖系統.jpg';
+    a.click();
+    a.remove();
+}
+
+CanvasPanel.prototype.storeAsJson = function ()
+{
+    var data = JSON.stringify(this);
+    var blob = new Blob([data], {type: 'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = '繪圖系統.json';
+    a.click();
+    a.remove();
+}
+
+CanvasPanel.prototype.loadAsJson = function (file)
+{
+    var fileReader = new FileReader();
+    var canvasPanel = this;
+
+    fileReader.onload = function ()
+    {
+        canvasPanel.layers = [];
+        canvasPanel.panelLayer.textContent = '';
+        var data = JSON.parse(this.result);
+        canvasPanel.width = Math.max(100, Math.min(980, parseInt(data.width) || 800));
+        canvasPanel.height = Math.max(100, Math.min(680, parseInt(data.height) || 600));
+        canvasPanel.backgroundColor = data.backgroundColor || 'white';
+
+        canvasPanel.canvas.width = canvasPanel.width;
+        canvasPanel.canvas.height = canvasPanel.height;
+        canvasPanel.context = canvasPanel.canvas.getContext('2d');
+        canvasPanel.context.lineCap = 'round';
+
+        data.layers.forEach(function (layer) {
+            canvasPanel.newLayer();
+            var shape = new Shape(layer.shapes[0]);
+            if ('paint-bucket' === shape.mode) {
+                shape.points = [];
+            }
+            canvasPanel.activeLayer.shapes.push(shape);
+        });
+        canvasPanel.cancelLayers();
+
+        canvasPanel.refresh = true;
+    }
+
+    fileReader.readAsText(file);
 }

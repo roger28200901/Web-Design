@@ -13,20 +13,22 @@ var Shape = function (data)
     this.shape = data.shape || '';
     this.illustration = data.illustration || '';
     this.isFilled = data.isFilled || false;
+    this.scaleX = data.scaleX || 1;
+    this.scaleY = data.scaleY || 1;
 
-    this.withShift = false;
-    this.withCtrl = false;
+    this.withShift = data.withSfalse || false;
+    this.withCtrl = data.withCtrl || false;
 
-    this.width = 0;
-    this.height = 0;
+    this.width = data.width || 0;
+    this.height = data.width || 0;
 
     this.leftTop = new Point({});
     this.rightBottom = new Point({});
 
+    this.imageData = null;
+
     this.anchors = [new Anchor({}), new Anchor({}), new Anchor({}), new Anchor({})];
-    this.scaleX = 1;
-    this.scaleY = 1;
-    this.scaleShift = false;
+    this.scaleShift = data.scaleShift || false;
 
     this.fillColor = null;
 }
@@ -65,6 +67,7 @@ Shape.prototype.draw = function (context)
                 });
             }
             context.putImageData(this.imageData, 0, 0);
+            this.imageData = null;
             break;
         case 'brush':
             var shape = this;
@@ -169,7 +172,10 @@ Shape.prototype.draw = function (context)
         case 'illustration':
             var x = center.x + (this.end.x - center.x) * this.scaleX;
             var y = center.y + (this.end.y - center.y) * this.scaleY;
-            context.drawImage(this.illustration, x, y, this.width * this.scaleX, this.height * this.scaleY);
+            var illustration = document.getElementById(this.illustration);
+            this.width = illustration.width;
+            this.height = illustration.height;
+            context.drawImage(illustration, x, y, this.width * this.scaleX, this.height * this.scaleY);
             break;
     }
     context.closePath();

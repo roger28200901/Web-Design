@@ -26,4 +26,23 @@ window.onload = function ()
     document.addEventListener('keyup', function (event) {
         canvasPanel.keyup(event);
     });
+
+    document.getElementById('storeAsImage').addEventListener('click', function (event) {
+        canvasPanel.storeAsImage();
+    });
+
+    document.getElementById('storeAsJson').addEventListener('click', function (event) {
+        canvasPanel.storeAsJson();
+    });
+
+    document.getElementById('loadAsJson').addEventListener('click', function (event) {
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.addEventListener('change', function () {
+            canvasPanel.loadAsJson(this.files[0]);
+            this.remove();
+        });
+
+        input.click();
+    });
 }
