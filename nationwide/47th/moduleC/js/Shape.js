@@ -48,7 +48,7 @@ Shape.prototype.draw = function (context)
             } else {
                 var shape = this;
                 shape.points.forEach(function (point) {
-                    var offset = (point.y * shape.boundX + point.x) * 4;
+                    var offset = ((point.y + shape.start.y) * shape.boundX + (point.x + shape.start.x)) * 4;
                     for (var i = 0; i < 3; i++) {
                         shape.imageData.data[offset + i] = shape.fillColor[i];
                     }
@@ -178,7 +178,7 @@ Shape.prototype.setBound = function ()
     var shape = this;
     shape.leftTop = new Point(shape.start);
     shape.rightBottom = new Point(shape.end);
-    if ('brush' === shape.mode) {
+    if ('paint-bucket' === shape.mode || 'brush' === shape.mode) {
         shape.points.forEach(function (point) {
             shape.leftTop.x = Math.min(shape.leftTop.x, shape.start.x + point.x);
             shape.leftTop.y = Math.min(shape.leftTop.y, shape.start.y + point.y);
@@ -316,7 +316,7 @@ Shape.prototype.fill = function (x, y, originalColor,)
             var point = pointStack.pop();
             x = point.x;
             y = point.y;
-            shape.points.push(new Point({'x': x, 'y': y}));
+            shape.points.push(new Point({'x': x - shape.start.x, 'y': y - shape.start.y}));
         }
     }
 }
