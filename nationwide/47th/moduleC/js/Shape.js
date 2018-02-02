@@ -48,7 +48,12 @@ Shape.prototype.draw = function (context)
             } else {
                 var shape = this;
                 shape.points.forEach(function (point) {
-                    var offset = ((point.y + shape.start.y) * shape.boundX + (point.x + shape.start.x)) * 4;
+                    var x = point.x + shape.start.x;
+                    var y = point.y + shape.start.y;
+                    if (x < 0 || x > shape.boundX || y < 0 || y > shape.boundY) {
+                        return;
+                    }
+                    var offset = (y * shape.boundX + x) * 4;
                     for (var i = 0; i < 3; i++) {
                         shape.imageData.data[offset + i] = shape.fillColor[i];
                     }

@@ -65,13 +65,15 @@ canvasPanel.canvas.addEventListener('mousedown', function (event) {
     if ('choose' === canvasPanel.currentMode) {
         if (canvasPanel.activeLayer) {
             canvasPanel.activeLayer.shapes.forEach(function (shape) {
-                shape.anchors.forEach(function (anchor) {
-                    if (anchor.contain(mouse)) {
-                        canvasPanel.moveShape = shape;
-                        canvasPanel.resize = true;
-                        return;
-                    }
-                });
+                if ('paint-bucket' !== shape.mode) {
+                    shape.anchors.forEach(function (anchor) {
+                        if (anchor.contain(mouse)) {
+                            canvasPanel.moveShape = shape;
+                            canvasPanel.resize = true;
+                            return;
+                        }
+                    });
+                }
                 if (!canvasPanel.resize) {
                     if (shape.contain(mouse)) {
                         canvasPanel.moveShape = shape;
@@ -214,6 +216,12 @@ CanvasPanel.prototype.redraw = function()
 
         if ('choose' === this.currentMode && this.activeLayer) {
             this.activeLayer.shapes[0].focus(context);
+            if ('paint-bucket' !== this.activeLayer.shapes[0].mode) {
+                var context = this.context;
+                this.activeLayer.shapes[0].anchors.forEach(function (anchor) {
+                    anchor.draw(context);
+                });
+            }
         }
     }
 }
