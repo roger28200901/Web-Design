@@ -208,8 +208,10 @@ Shape.prototype.setBound = function ()
                 shape.rightBottom.y = shape.start.y + radius;
                 return;
             }
-            shape.leftTop.x = shape.start.x - (shape.end.x - shape.start.x);
-            shape.leftTop.y = shape.start.y - (shape.end.y - shape.start.y);
+            shape.leftTop.x = shape.start.x - Math.abs(shape.end.x - shape.start.x);
+            shape.leftTop.y = shape.start.y - Math.abs(shape.end.y - shape.start.y);
+            shape.rightBottom.x = shape.start.x + Math.abs(shape.end.x - shape.start.x);
+            shape.rightBottom.y = shape.start.y + Math.abs(shape.end.y - shape.start.y);
             return;
         }
         var width = Math.abs(this.start.x - this.end.x);
