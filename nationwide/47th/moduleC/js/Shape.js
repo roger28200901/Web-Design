@@ -257,21 +257,16 @@ Shape.prototype.setAnchors = function ()
 
 Shape.prototype.resize = function (mouse)
 {
-    this.width = this.rightBottom.x - this.leftTop.x;
-    this.height = this.rightBottom.y - this.leftTop.y;
-    if (Math.abs(mouse.x - this.leftTop.x) > Math.abs(mouse.x - this.rightBottom.x)) {
-        this.scaleX = 1 + (mouse.x - this.rightBottom.x) / this.width;
-    } else {
-        this.scaleX = 1 + (this.leftTop.x - mouse.x) / this.width;
-    }
-    if (Math.abs(mouse.y - this.leftTop.y) > Math.abs(mouse.y - this.rightBottom.y)) {
-        this.scaleY = 1 + (mouse.y - this.rightBottom.y) / this.height;
-    } else {
-        this.scaleY = 1 + (this.leftTop.y - mouse.y) / this.height;
-    }
+    var center = new Point({});
+    center.x = (this.leftTop.x + this.rightBottom.x) / 2;
+    center.y = (this.leftTop.y + this.rightBottom.y) / 2;
+    var width = (this.rightBottom.x - this.leftTop.x) / 2;
+    var height = (this.rightBottom.y - this.leftTop.y) / 2;
+    this.scaleX = Math.abs(mouse.x - center.x) / width;
+    this.scaleY = Math.abs(mouse.y - center.y) / height;
 }
 
-Shape.prototype.fill = function (x, y, originalColor,)
+Shape.prototype.fill = function (x, y, originalColor)
 {
     var shape = this;
     var pointStack = [new Point({
