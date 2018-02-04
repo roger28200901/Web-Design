@@ -150,10 +150,12 @@ canvasPanel.canvas.addEventListener('mousemove', function (event) {
         return;
     }
     if (canvasPanel.moveShape) {
-        canvasPanel.moveShape.end.x = canvasPanel.moveShape.end.x - canvasPanel.moveShape.start.x + mouse.x;
-        canvasPanel.moveShape.end.y = canvasPanel.moveShape.end.y - canvasPanel.moveShape.start.y + mouse.y;
-        canvasPanel.moveShape.start = mouse;
-        canvasPanel.refresh = true;
+        if (canvasPanel.moveShape.withCtrl) {
+            canvasPanel.moveShape.end.x = canvasPanel.moveShape.end.x - canvasPanel.moveShape.start.x + mouse.x;
+            canvasPanel.moveShape.end.y = canvasPanel.moveShape.end.y - canvasPanel.moveShape.start.y + mouse.y;
+            canvasPanel.moveShape.start = mouse;
+            canvasPanel.refresh = true;
+        }
         return;
     }
 });
@@ -174,8 +176,6 @@ CanvasPanel.prototype.keydown = function (event)
     if (this.activeShape) {
         if (16 === event.keyCode) {
             this.activeShape.withShift = true;
-        } else if (17 === event.keyCode) {
-            this.activeShape.withCtrl = true;
         }
         this.refresh = true;
         return;
@@ -183,8 +183,12 @@ CanvasPanel.prototype.keydown = function (event)
     if (this.resize) {
         if (16 === event.keyCode) {
             this.moveShape.scaleShift = true;
-        } else if (17 === event.keyCode) {
-            this.moveShape.scaleShift = true;
+        }
+        return;
+    }
+    if (this.moveShape) {
+        if (17 === event.keyCode) {
+            this.moveShape.withCtrl = true;
         }
     }
 }
@@ -194,8 +198,6 @@ CanvasPanel.prototype.keyup = function (event)
     if (this.activeShape) {
         if (16 === event.keyCode) {
             this.activeShape.withShift = false;
-        } else if (17 === event.keyCode) {
-            this.activeShape.withCtrl = false;
         }
         this.refresh = true;
         return;
@@ -203,8 +205,12 @@ CanvasPanel.prototype.keyup = function (event)
     if (this.resize) {
         if (16 === event.keyCode) {
             this.moveShape.scaleShift = false;
-        } else if (17 === event.keyCode) {
-            this.moveShape.scaleShift = false;
+        }
+        return;
+    }
+    if (this.moveShape) {
+        if (17 === event.keyCode) {
+            this.moveShape.withCtrl = false;
         }
     }
 }
