@@ -35,6 +35,7 @@ var CanvasPanel = function (data)
 
     this.resize = false;
     this.refresh = false;
+    this.panelResize = false;
 
     this.init();
 }
@@ -62,6 +63,12 @@ canvasPanel.buttonFillShift.addEventListener('click', function (event) {
 
 canvasPanel.canvas.addEventListener('mousedown', function (event) {
     var mouse = canvasPanel.getMouse(event);
+    if (canvasPanel.anchorContain(mouse)) {
+        canvasPanel.panelResize = true;
+        canvasPanel.offsetLeft = canvasPanel.width - mouse.x;
+        canvasPanel.offsetTop = canvasPanel.height - mouse.y;
+        return;
+    }
     if ('choose' === canvasPanel.currentMode) {
         if (canvasPanel.activeLayer) {
             canvasPanel.activeLayer.shapes.forEach(function (shape) {
@@ -112,6 +119,17 @@ canvasPanel.canvas.addEventListener('mousedown', function (event) {
 
 canvasPanel.canvas.addEventListener('mousemove', function (event) {
     var mouse = canvasPanel.getMouse(event);
+    if (canvasPanel.panelResize) {
+        if (mouse.x < 0 || mouse.x > 980 || mouse.y < 0 || mouse.y > 680) {
+            return;
+        }
+        canvasPanel.width = mouse.x + canvasPanel.offsetLeft;
+        canvasPanel.height = mouse.y + canvasPanel.offsetTop;
+        canvasPanel.canvas.width = canvasPanel.width;
+        canvasPanel.canvas.height = canvasPanel.height;
+        canvasPanel.refresh = true;
+        return;
+    }
     if (canvasPanel.activeShape) {
         if ('brush' === canvasPanel.activeShape.mode) {
             canvasPanel.activeShape.points.push(new Point({
@@ -146,6 +164,7 @@ canvasPanel.canvas.addEventListener('mouseup', function (event) {
     canvasPanel.offsetLeft = null;
     canvasPanel.offsetTop = null;
     canvasPanel.resize = false;
+    canvasPanel.panelResize = false;
 });
 
 }
@@ -236,7 +255,29 @@ CanvasPanel.prototype.redraw = function()
                 });
             }
         }
+
+        this.drawAnchor();
     }
+}
+
+CanvasPanel.prototype.drawAnchor = function ()
+{
+    this.context.beginPath();
+    this.context.moveTo(this.width, this.height);
+    this.context.lineTo(this.width - 20, this.height);
+    this.context.lineTo(this.width, this.height - 20);
+    this.context.closePath();
+    this.context.fillStyle = '#548';
+    this.context.fill();
+}
+
+CanvasPanel.prototype.anchorContain = function (point)
+{
+    var m = (point.x - (this.width - 20)) / (point.y - this.height);
+    if (m < -1) {
+        return true;
+    }
+    return false;
 }
 
 CanvasPanel.prototype.initModes = function ()
