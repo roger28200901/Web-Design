@@ -15,15 +15,15 @@ class CreateSchedulesTable extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->increments('id');
-            $table->enum('type', ['TRAIN', 'BUS']);
-            $table->integer('line');
-            $table->integer('from_place_id');
-            $table->integer('to_place_id');
-            $table->time('departure_time');
-            $table->time('arrival_time');
-            $table->integer('distance');
-            $table->integer('speed');
-            $table->enum('status', ['AVAILABLE', 'UNAVAILABLE']);
+            $table->enum('type', ['TRAIN', 'BUS'])->default('TRAIN');
+            $table->integer('line')->default(0);
+            $table->integer('from_place_id')->default(0);
+            $table->integer('to_place_id')->default(0);
+            $table->time('departure_time')->useCurrent();
+            $table->time('arrival_time')->useCurrent();
+            $table->integer('distance')->default(0);
+            $table->integer('speed')->default(0);
+            $table->enum('status', ['AVAILABLE', 'UNAVAILABLE'])->default('AVAILABLE');
         });
     }
 

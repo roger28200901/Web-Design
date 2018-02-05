@@ -16,13 +16,13 @@ class CreatePlacesTable extends Migration
     {
         Schema::create('places', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name', 100);
-            $table->integer('x');
-            $table->integer('y');
-            $table->string('image_path', 50);
-            $table->text('description');
+            $table->string('name', 100)->default('');
+            $table->integer('x')->default(0);
+            $table->integer('y')->default(0);
+            $table->string('image_path', 50)->default('');
+            $table->text('description')->nullable();
         });
-        DB::statement('ALTER TABLE `places` ADD `longitude` FLOAT NOT NULL AFTER `name`, ADD `latitude` FLOAT NOT NULL AFTER `name`');
+        DB::statement('ALTER TABLE `places` ADD `longitude` FLOAT NOT NULL DEFAULT 0 AFTER `name`, ADD `latitude` FLOAT NOT NULL DEFAULT 0 AFTER `name`');
     }
 
     /**

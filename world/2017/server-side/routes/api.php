@@ -16,3 +16,11 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('/v1/auth/login', 'AuthController@login');
+
+Route::middleware('auth.token')->group(function () {
+    Route::get('/v1/auth/logout', 'AuthController@logout');
+
+    Route::resource('/v1/place', 'PlacesController');
+});
