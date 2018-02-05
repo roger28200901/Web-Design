@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Validator;
+use App\Place;
 
 class PlacesController extends Controller
 {
@@ -35,7 +37,53 @@ class PlacesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        /* Retrieving A Portion Of The Input Data */
+        $data = $request->except('token');
+
+        /* Setting Validation Rules */
+        $rules = [
+            'name' => 'required|unique:places',
+            'latitude' => 'required',
+            'longitude' => 'required',
+            'x' => 'required',
+            'y' => 'required',
+            'image' => 'required',
+            'description' => ''
+        ];
+
+        /* Filtering Redundant Data(s) */
+        if (count(array_diff_key($data, $rules))) {
+            abort(422, 'data cannot be processed');
+        }
+
+        /* Generating Validator */
+        $validator = Validator::make($data, $rules);
+
+        /* Throwing Validator Exception */
+        if ($validator->fails()) {
+            abort(422, 'data cannot be processed');
+        }
+
+        /* Checking Duplicated Row(s) */
+        if (Place::where(['latitude' => $data['latitude'], 'longitude' => $data['longitude']])->orWhere(['x' => $data['x'], 'y' => $data['y']])->first()) {
+            abort(422, 'data cannot be processed');
+        }
+
+        /* Checking Extension of Image */
+        if (!preg_match('/(image)\.*/', $data['image']->getMimeType())) {
+            abort(422, 'data cannot be processed');
+        }
+
+        /* Storing Image */
+        $image_path = $data['image']->store('/');
+
+        /* Compacting Data */
+        unset($data['image']);
+        $data['image_path'] = $image_path;
+        Place::create($data);
+
+        /* Returning Response */
+        return response()->json(['message' => 'create success']);
     }
 
     /**

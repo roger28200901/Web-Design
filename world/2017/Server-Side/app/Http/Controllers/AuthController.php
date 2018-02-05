@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Validator;
 use App\User;
 use Hash;
-use App\Http\Controllers\Controller;
 
 class AuthController extends Controller
 {
@@ -25,18 +25,12 @@ class AuthController extends Controller
             'password' => 'required'
         ];
 
-        /* Setting Error Messages */
-        $messages = [
-            'username.required' => 'invalid login',
-            'password.required' => 'invalid login'
-        ];
-
         /* Generating Validator */
-        $validator = Validator::make($request->all(), $rules, $messages);
+        $validator = Validator::make($request->all(), $rules);
 
         /* Throwing Validator Exception */
         if ($validator->fails()) {
-            abort(401, $validator->errors()->first());
+            abort(401, 'invalid login');
         }
 
         /* Getting User via Username and Password */
