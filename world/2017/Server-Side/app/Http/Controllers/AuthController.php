@@ -33,7 +33,7 @@ class AuthController extends Controller
             abort(401, 'invalid login');
         }
 
-        /* Getting User via Username and Password */
+        /* Getting User Via Username And Password */
         $user = User::where('username', $request->username)->first();
         if (!$user || Hash::check($user->password, $request->password)) {
             abort(401, 'invalid login'); // Throwing Invalid Login Exception
@@ -54,7 +54,7 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        /* Findding User via Authorization Token */
+        /* Findding User Via Authorization Token */
         $user = User::where('token', $request->token)->firstOrFail();
 
         /* Unsetting User Login Status */

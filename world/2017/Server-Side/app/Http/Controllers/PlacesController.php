@@ -16,7 +16,11 @@ class PlacesController extends Controller
      */
     public function index()
     {
-        //
+        /* Getting A Listing Of The Places */
+        $places = Place::all();
+
+        /* Returning Response */
+        return response()->json($places);
     }
 
     /**
@@ -69,7 +73,7 @@ class PlacesController extends Controller
             abort(422, 'data cannot be processed');
         }
 
-        /* Checking Extension of Image */
+        /* Checking Extension Of Image */
         if (!preg_match('/(image)\.*/', $data['image']->getMimeType())) {
             abort(422, 'data cannot be processed');
         }
@@ -94,7 +98,11 @@ class PlacesController extends Controller
      */
     public function show($id)
     {
-        //
+        /* Retrieving Place Via ID */
+        $place = Place::findOrFail($id);
+
+        /* Returning Response */
+        return response()->json($place);
     }
 
     /**

@@ -16,7 +16,7 @@ class VerifyAuthorizationToken
      */
     public function handle($request, Closure $next)
     {
-        /* Findding User via Authorization Token */
+        /* Findding User Via Authorization Token */
         User::where('token', $request->token)->firstOrFail();
 
         return $next($request);
