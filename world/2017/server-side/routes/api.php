@@ -27,4 +27,6 @@ Route::middleware('auth.token')->group(function () {
     Route::post('/v1/place', 'PlacesController@store');
     Route::delete('/v1/place/{id}', 'PlacesController@destroy');
     Route::post('/v1/place/{id}', 'PlacesController@update');
+
+    Route::post('/v1/schedule', 'SchedulesController@store');
 });
