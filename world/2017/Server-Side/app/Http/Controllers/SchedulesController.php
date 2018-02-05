@@ -55,4 +55,25 @@ class SchedulesController extends Controller
         /* Returning Response */
         return response()->json(['message' => 'create success']);
     }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Request $request, $id)
+    {
+        /* Checking User Role */
+        if ('ADMIN' !== $request->userRole) {
+            abort(400, 'data cannot be deleted');
+        }
+
+        /* Deleting Place */
+        $schedule = Schedule::destroy($id);
+
+        /* Returning Response */
+        return response()->json(['message' => 'delete success']);
+    }
 }
