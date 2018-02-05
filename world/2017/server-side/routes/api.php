@@ -22,5 +22,9 @@ Route::post('/v1/auth/login', 'AuthController@login');
 Route::middleware('auth.token')->group(function () {
     Route::get('/v1/auth/logout', 'AuthController@logout');
 
-    Route::resource('/v1/place', 'PlacesController');
+    Route::get('/v1/place', 'PlacesController@index');
+    Route::get('/v1/place/{id}', 'PlacesController@show');
+    Route::post('/v1/place', 'PlacesController@store');
+    Route::delete('/v1/place/{id}', 'PlacesController@destroy');
+    Route::post('/v1/place/{id}', 'PlacesController@update');
 });

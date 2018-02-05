@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Validator;
 use App\Place;
+use Storage;
 
 class PlacesController extends Controller
 {
@@ -41,8 +42,13 @@ class PlacesController extends Controller
      */
     public function store(Request $request)
     {
+        /* Checking User Role */
+        if ('ADMIN' !== $request->userRole) {
+            abort(422, 'data cannot be processed');
+        }
+
         /* Retrieving A Portion Of The Input Data */
-        $data = $request->except('token');
+        $data = $request->except(['token', 'userRole']);
 
         /* Setting Validation Rules */
         $rules = [
@@ -99,7 +105,7 @@ class PlacesController extends Controller
     public function show($id)
     {
         /* Retrieving Place Via ID */
-        $place = Place::findOrFail($id);
+        $place = Place::find($id);
 
         /* Returning Response */
         return response()->json($place);
@@ -125,17 +131,71 @@ class PlacesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        /* Checking User Role */
+        if ('ADMIN' !== $request->userRole) {
+            abort(400, 'data cannot be updated');
+        }
+
+        /* Retrieving A Portion Of The Input Data */
+        $data = $request->except(['token', 'userRole']);
+
+        /* Filtering Redundant Data(s) */
+        if (count(array_diff_key($data, ['name' => '', 'latitude' => '', 'longitude' => '', 'x' => '', 'y' => '', 'image' => '', 'description' => '']))) {
+            abort(400, 'data cannot be updated');
+        }
+
+        /* Getting Place */
+        $place = Place::find($id);
+
+        if (isset($data['image'])) {
+            /* Checking Extension Of Image */
+            if (!preg_match('/(image)\.*/', $data['image']->getMimeType())) {
+                abort(400, 'data cannot be processed');
+            }
+
+            /* Unlinking Image File */
+            Storage::delete($place->image_path);
+
+            /* Storing Image */
+            $image_path = $data['image']->store('/');
+
+            /* Compacting Data */
+            unset($data['image']);
+            $data['image_path'] = $image_path;
+        }
+
+        $place->update($data);
+
+        /* Returning Response */
+        return response()->json(['message' => 'update success']);
     }
 
     /**
      * Remove the specified resource from storage.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
+        /* Checking User Role */
+        if ('ADMIN' !== $request->userRole) {
+            abort(400, 'data cannot be deleted');
+        }
+
+        /* Getting Place */
+        $place = Place::find($id);
+
+        if ($place) {
+            /* Unlinking Image File */
+            Storage::delete($place->image_path);
+
+            /* Deleting Place */
+            $place->delete();
+        }
+
+        /* Returning Response */
+        return response()->json(['message' => 'delete success']);
     }
 }

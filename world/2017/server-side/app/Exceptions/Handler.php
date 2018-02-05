@@ -6,7 +6,6 @@ use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class Handler extends ExceptionHandler
 {
@@ -49,11 +48,6 @@ class Handler extends ExceptionHandler
         /* Handling HttpException */
         if ($exception instanceof HttpException) {
             return response()->json(['message' => $exception->getMessage()], $exception->getStatusCode());
-        }
-
-        /* Handling ModelNotFoundException */
-        if ($exception instanceof ModelNotFoundException) {
-            return response()->json(['message' => 'Unauthorized user'], 401);
         }
 
         return parent::render($request, $exception);
