@@ -18,7 +18,6 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // User::create($request->all());
         /* Setting Validation Rules */
         $rules = [
             'username' => 'required',
