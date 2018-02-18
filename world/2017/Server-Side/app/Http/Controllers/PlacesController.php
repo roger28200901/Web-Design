@@ -25,16 +25,6 @@ class PlacesController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -52,6 +42,7 @@ class PlacesController extends Controller
 
         /* Setting Validation Rules */
         $rules = [
+            'code' => 'required|unique:places',
             'name' => 'required|unique:places',
             'latitude' => 'required',
             'longitude' => 'required',
@@ -109,17 +100,6 @@ class PlacesController extends Controller
 
         /* Returning Response */
         return response()->json($place);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
