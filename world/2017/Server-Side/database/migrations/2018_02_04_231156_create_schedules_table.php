@@ -17,8 +17,8 @@ class CreateSchedulesTable extends Migration
             $table->increments('id');
             $table->enum('type', ['TRAIN', 'BUS'])->default('TRAIN');
             $table->integer('line')->default(0);
-            $table->integer('from_place_id')->default(0);
-            $table->integer('to_place_id')->default(0);
+            $table->string('from_place_id', 3)->default('');
+            $table->string('to_place_id', 3)->default('');
             $table->time('departure_time')->useCurrent();
             $table->time('arrival_time')->useCurrent();
             $table->integer('distance')->default(0);
