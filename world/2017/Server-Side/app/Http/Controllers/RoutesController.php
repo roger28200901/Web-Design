@@ -25,7 +25,7 @@ class RoutesController extends Controller
         $this->places = Place::all()->keyBy('place_id');
 
         /* Getting all schedules and push into array with places infomation */
-        Schedule::all()->map(function ($schedule) {
+        Schedule::with('from_place', 'to_place')->get()->map(function ($schedule) {
             $this->schedule_tables[$schedule->from_place_id][$schedule->to_place_id][] = $schedule;
         });
 

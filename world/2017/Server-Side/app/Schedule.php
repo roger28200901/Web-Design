@@ -26,4 +26,20 @@ class Schedule extends Model
     protected $table = 'schedules';
 
     public $timestamps = false;
+
+    /**
+     * Get the from place owns the schedule.
+     */
+    public function from_place()
+    {
+        return $this->belongsTo(Place::class, 'from_place_id', 'place_id');
+    }
+
+    /**
+     * Get the to place owns the schedule.
+     */
+    public function to_place()
+    {
+        return $this->belongsTo(Place::class, 'to_place_id', 'place_id');
+    }
 }
