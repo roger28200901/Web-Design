@@ -15,7 +15,7 @@ class PlacesTableSeeder extends Seeder
         $places = [
             [
                 'id' => '1',
-                'code' => '000',
+                'place_id' => '000',
                 'name' => 'Danube Delta',
                 'latitude' => '24.5234',
                 'longitude' => '54.3781',
@@ -26,7 +26,7 @@ class PlacesTableSeeder extends Seeder
             ],
             [
                 'id' => '2',
-                'code' => '001',
+                'place_id' => '001',
                 'name' => 'Al Bateen Beach',
                 'latitude' => '24.4913',
                 'longitude' => '54.4141',
@@ -37,7 +37,7 @@ class PlacesTableSeeder extends Seeder
             ],
             [
                 'id' => '3',
-                'code' => '002',
+                'place_id' => '002',
                 'name' => 'Umm Al Emarat Park',
                 'latitude' => '24.4567',
                 'longitude' => '54.4238',
@@ -48,7 +48,7 @@ class PlacesTableSeeder extends Seeder
             ],
             [
                 'id' => '4',
-                'code' => '003',
+                'place_id' => '003',
                 'name' => 'Murjan Splash Park',
                 'latitude' => '24.4213',
                 'longitude' => '54.4724',
@@ -59,7 +59,7 @@ class PlacesTableSeeder extends Seeder
             ],
             [
                 'id' => '5',
-                'code' => '004',
+                'place_id' => '004',
                 'name' => 'Yas Waterworld',
                 'latitude' => '24.4457',
                 'longitude' => '54.5158',
@@ -70,7 +70,7 @@ class PlacesTableSeeder extends Seeder
             ],
             [
                 'id' => '6',
-                'code' => '005',
+                'place_id' => '005',
                 'name' => 'Sheikh Zayed Bridge',
                 'latitude' => '24.5103',
                 'longitude' => '54.4952',
@@ -81,7 +81,7 @@ class PlacesTableSeeder extends Seeder
             ],
             [
                 'id' => '7',
-                'code' => '006',
+                'place_id' => '006',
                 'name' => 'Manarat Al Saadiyat',
                 'latitude' => '24.4604',
                 'longitude' => '54.3185',
@@ -92,7 +92,7 @@ class PlacesTableSeeder extends Seeder
             ],
             [
                 'id' => '8',
-                'code' => '007',
+                'place_id' => '007',
                 'name' => 'Saadiyat Island',
                 'latitude' => '24.4702',
                 'longitude' => '54.3739',
@@ -103,7 +103,7 @@ class PlacesTableSeeder extends Seeder
             ],
             [
                 'id' => '9',
-                'code' => '008',
+                'place_id' => '008',
                 'name' => 'Bainunah Park',
                 'latitude' => '24.4733',
                 'longitude' => '54.4563',
@@ -114,7 +114,7 @@ class PlacesTableSeeder extends Seeder
             ],
             [
                 'id' => '10',
-                'code' => '009',
+                'place_id' => '009',
                 'name' => 'Marina Eye',
                 'latitude' => '24.4121',
                 'longitude' => '54.6146',
@@ -125,7 +125,7 @@ class PlacesTableSeeder extends Seeder
             ],
             [
                 'id' => '11',
-                'code' => '010',
+                'place_id' => '010',
                 'name' => 'Corniche Beach',
                 'latitude' => '24.4271',
                 'longitude' => '54.4321',
