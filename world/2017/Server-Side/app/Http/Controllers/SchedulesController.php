@@ -29,8 +29,8 @@ class SchedulesController extends Controller
         $rules = [
             'type' => 'required|in:TRAIN,BUS',
             'line' => 'required',
-            'from_place_id' => 'required',
-            'to_place_id' => 'required',
+            'from_place_id' => 'required|Exists:places,place_id',
+            'to_place_id' => 'required|Exists:places,place_id',
             'departure_time' => 'required',
             'arrival_time' => 'required',
             'distance' => 'required',
