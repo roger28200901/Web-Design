@@ -19,6 +19,7 @@ class CreateHistoriesTable extends Migration
             $table->string('from_place_id', 3)->default('');
             $table->string('to_place_id', 3)->default('');
             $table->text('schedule_id')->nullable();
+            $table->text('place_id')->nullable();
         });
     }
 
