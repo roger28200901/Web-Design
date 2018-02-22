@@ -85,14 +85,19 @@ class RoutesController extends Controller
             abort(422, 'Data cannot be processed');
         }
 
+        $schedules = Schedule::find($request->schedule_id);
+
         /* Throwing Exception While Any Schedule ID In Array Is Invalid */
-        if (Schedule::find($request->schedule_id)->count() !== count($request->schedule_id)) {
+        if ($schedules->count() !== count($request->schedule_id)) {
             abort(422, 'Data cannot be processed');
         }
 
         /* Storing Into History */
-        $data = $request->all();
+        $data = $request->except('userRole', 'token');
         $data['schedule_id'] = json_encode($data['schedule_id']);
+        $data['place_id'] = $schedules->pluck('from_place_id')->toArray();
+        array_push($data['place_id'], $request->to_place_id);
+        $data['place_id'] = json_encode($data['place_id']);
         History::create($data);
 
         /* Returning Response */
@@ -138,8 +143,15 @@ class RoutesController extends Controller
                 return $result;
             })->all();
 
+            /* Compacting Places ID As Constraint Array */
+            $place_id = collect($this->temporary_schedules)->pluck('from_place_id')->toArray();
+            array_push($place_id, $destination_place_id);
+
+            /* Getting Count Of History Selection */
+            $count_of_history_selection = History::where('place_id', json_encode($place_id))->count();
+
             /* Pushing Into Routes Stack */
-            array_push($this->routes, $current_route);
+            array_push($this->routes, array('count of history selection' => $count_of_history_selection, 'schedules' => $current_route));
 
             return;
         }
@@ -178,7 +190,7 @@ class RoutesController extends Controller
         /* Sorting Routes */
         $sorted_routes = $this->routes;
         usort($sorted_routes, function ($first_route, $second_route) {
-            return end($first_route)['arrival_time'] <=> end($second_route)['arrival_time'];
+            return end($first_route['schedules'])['arrival_time'] <=> end($second_route['schedules'])['arrival_time'];
         });
 
         /* Returning Expected Count Of Routes */
