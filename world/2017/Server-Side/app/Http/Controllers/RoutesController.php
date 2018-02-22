@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Validator;
 use App\Place;
 use App\Schedule;
+use App\History;
 
 class RoutesController extends Controller
 {
@@ -20,16 +22,16 @@ class RoutesController extends Controller
      */
     public function __construct()
     {
-        /* Getting all schedules and push into array with places information */
+        /* Getting All Schedules And Push Into Array With Places Information */
         Schedule::with('from_place', 'to_place')->get()->map(function ($schedule) {
             $this->schedule_tables[$schedule->from_place_id][$schedule->to_place_id][] = $schedule->toArray();
         });
 
-        /* Initializing routes */
+        /* Initializing Routes */
         $this->routes = array();
 
-        /* Initializing temporary schedules */
-        $this->temporary_schedules = array(); // Using tmemporary schedules as schedules buffer
+        /* Initializing Temporary Schedules */
+        $this->temporary_schedules = array(); // Using tmemporary schedules as schedules buffer.
     }
 
     /**
@@ -42,21 +44,21 @@ class RoutesController extends Controller
      */
     public function search($from_place_id, $to_place_id, $departure_time = null)
     {
-        /* Setting expected count of routes */
+        /* Setting Expected Count Of Routes */
         $count_of_routes = 5;
 
-        /* Using current time as default departure time */
+        /* Using Current Time As Default Departure Time */
         if (!$departure_time) {
             $departure_time = date('H:i:s');
         }
 
-        /* Retriving all routes via from place, to place and departure_time */
+        /* Retriving All Routes Via From Place, To Place And Departure Time */
         $this->retrieveRoutes($from_place_id, $to_place_id, $departure_time);
 
-        /* Getting sorted routes via count of routes */
+        /* Getting Sorted Routes Via Count Of Routes */
         $routes = $this->sortRoutes($count_of_routes);
 
-        /* Return routes information */
+        /* Return Routes Information */
         return response()->json($routes);
     }
 
@@ -68,7 +70,33 @@ class RoutesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        /* Setting Validation Rules */
+        $rules = [
+            'from_place_id' => 'required|exists:places,place_id',
+            'to_place_id' => 'required|exists:places,place_id',
+            'schedule_id' => 'required|array'
+        ];
+
+        /* Generating Validator */
+        $validator = Validator::make($request->all(), $rules);
+
+        /* Throwing Validator Exception */
+        if ($validator->fails()) {
+            abort(422, 'Data cannot be processed');
+        }
+
+        /* Throwing Exception While Any Schedule ID In Array Is Invalid */
+        if (Schedule::find($request->schedule_id)->count() !== count($request->schedule_id)) {
+            abort(422, 'Data cannot be processed');
+        }
+
+        /* Storing Into History */
+        $data = $request->all();
+        $data['schedule_id'] = json_encode($data['schedule_id']);
+        History::create($data);
+
+        /* Returning Response */
+        return response()->json(['message' => 'create success']);
     }
 
     /**
@@ -82,21 +110,21 @@ class RoutesController extends Controller
      */
     private function retrieveRoutes($current_place_id, $destination_place_id, $arrival_time)
     {
-        /* Parsing into stack while current place equals to destination place */
+        /* Parsing Into Stack While Current Place Equals To Destination Place */
         if ($current_place_id === $destination_place_id) {
-            /* Compacting temporary schedules into expected route data */
+            /* Compacting Temporary Schedules Into Expected Route Data */
             $current_route = collect($this->temporary_schedules)->map(function ($schedule) {
-                /* Calculating travel time via departure time and arrival time */
+                /* Calculating Travel Time Via Departure Time And Arrival Time */
                 $departure_time = new \DateTime($schedule['departure_time']);
                 $arrival_time = new \DateTime($schedule['arrival_time']);
                 $travel_time = $departure_time->diff($arrival_time)->format('%H:%I:%S');
 
-                /* Compacting expected places data */
+                /* Compacting Expected Places Data */
                 $from_place = $schedule['from_place'];
                 $to_place = $schedule['to_place'];
                 unset($from_place['place_id'], $to_place['place_id']);
 
-                /* Compacting expected schedule data into result */
+                /* Compacting Expected Schedule Data Into Result */
                 $result = array(
                     'id' => $schedule['id'],
                     'type' => $schedule['type'],
@@ -110,28 +138,28 @@ class RoutesController extends Controller
                 return $result;
             })->all();
 
-            /* Pushing into routes stack */
+            /* Pushing Into Routes Stack */
             array_push($this->routes, $current_route);
 
             return;
         }
 
-        /* Handling expected errors */
+        /* Handling Expected Errors */
         if (!isset($this->schedule_tables[$current_place_id]) || collect($this->temporary_schedules)->where('from_place_id', $current_place_id)->count()) {
             return;
         }
 
-        /* Retrieving all feasible routes via current place */
+        /* Retrieving All Feasible Routes Via Current Place */
         foreach ($this->schedule_tables[$current_place_id] as $schedule_table) {
-            /* Collecting places group by type and sort by departure time which are still time */
+            /* Collecting Places Group By Type And Sort By Departure Time Which Are Still Time */
             $schedule_types = collect($schedule_table)->where('departure_time', '>', $arrival_time)->sortBy('departure_time')->groupBy('type')->all();
 
-            /* Retrieving all type of schedules */
+            /* Retrieving All Type Of Schedules */
             foreach ($schedule_types as $schedule_type) {
                 $next_schedule = $schedule_type[0]; // Getting next schedule of first schedule in this type
                 array_push($this->temporary_schedules, $next_schedule); // Pushing into temporary schedules stack
 
-                /* Traveling to next place */
+                /* Traveling To Next Place */
                 $this->retrieveRoutes($next_schedule['to_place_id'], $destination_place_id, $next_schedule['arrival_time']);
 
                 array_pop($this->temporary_schedules); // Popping next schedule which have to update in the next step
@@ -147,18 +175,18 @@ class RoutesController extends Controller
      */
     private function sortRoutes($count_of_routes = 0)
     {
-        /* Sorting routes */
+        /* Sorting Routes */
         $sorted_routes = $this->routes;
         usort($sorted_routes, function ($first_route, $second_route) {
             return end($first_route)['arrival_time'] <=> end($second_route)['arrival_time'];
         });
 
-        /* Returning expected count of routes */
+        /* Returning Expected Count Of Routes */
         if ($count_of_routes) {
             return array_slice($sorted_routes, 0, $count_of_routes);
         }
 
-        /* Returning all routes by default */
+        /* Returning All Routes By Default */
         return $sorted_routes;
     }
 }
