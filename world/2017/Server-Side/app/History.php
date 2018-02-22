@@ -15,7 +15,8 @@ class History extends Model
         'user_id',
         'from_place_id',
         'to_place_id',
-        'schedule_id'
+        'schedule_id',
+        'place_id'
     ];
 
     protected $table = 'histories';
