@@ -10,11 +10,16 @@ const app = new Vue({
             auth: {
                 username: 'admin',
                 password: '1234'
+            },
+            search: {
+                fromPlaceId: '',
+                toPlaceId: '',
+                departureTime: ''
             }
         }
     },
     methods: {
-        login: function () {
+        userLogin: function () {
             var self = this;
 
             /* Sending Ajax To Login Service */
@@ -33,7 +38,7 @@ const app = new Vue({
                 }
             });
         },
-        logout: function () {
+        userLogout: function () {
             var self = this;
 
             /* Sending Ajax To Logout Service */
@@ -50,6 +55,38 @@ const app = new Vue({
                 },
                 statusCode: {
                     401: function (response) {
+                        //
+                    }
+                }
+            });
+        },
+        routeSearch: function () {
+            var self = this;
+
+            if (!self.user.token) {
+                $('#navbarDropdownMenuLink').dropdown('toggle');
+                return;
+            }
+
+            if (self.forms.search.departureTime) {
+                self.forms.search.departureTime += ':00';
+            }
+
+            /* Sending Ajax To Search Routes */
+            $.ajax({
+                url: self.baseAPIUrl + `/route/search/${self.forms.search.fromPlaceId}/${self.forms.search.toPlaceId}/${self.forms.search.departureTime}`,
+                type: 'get',
+                dataType: 'text',
+                data: {
+                    token: self.user.token
+                },
+                contentType: 'application/json',
+                success: function (response) {
+                    console.log(JSON.parse(response));
+                },
+                statusCode: {
+                    401: function (response) {
+                        //
                     }
                 }
             });
