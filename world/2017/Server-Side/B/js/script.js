@@ -150,7 +150,6 @@ const app = new Vue({
                     </div>
                 `);
             });
-            console.log(places);
 
             $('#Layer_places').html(places.join(''));
         }
