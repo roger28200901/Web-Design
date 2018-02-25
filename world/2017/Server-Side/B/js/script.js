@@ -137,15 +137,22 @@ const app = new Vue({
             });
         },
         drawPlaces: function () {
-            var html = '';
+            var places = [];
 
             this.places.forEach(function (place, i) {
-                html += `<circle class="point-${i}" cx="${place.x}" cy="${place.y}" r="8" data-toggle="popover" title="${place.name + ' ' + place.place_id}"></circle>`;
-                html += `<text class="point-${i}" x="${place.x - 30}" y="${place.y + 25}" data-toggle="popover" title="${place.name}">${place.name}</text>`;
-                html += `<span id="point-${i}"><img src="../A/public/img/${place.image_path}">Description: <br>${place.description}</span>`;
+                places.push(`
+                    <circle cx="${place.x}" cy="${place.y}" r="8" data-place-id="${place.place_id}" data-toggle="popover"></circle>
+                    <text x="${place.x - 30}" y="${place.y + 30}" data-place-id="${place.place_id}">${place.name}</text>
+                    <div id="placeData${place.place_id}">
+                        <img src="../A/public/img/${place.image_path}">
+                        <br>Description:</br>
+                        <span>${place.description}</span>
+                    </div>
+                `);
             });
+            console.log(places);
 
-            $('#Layer_places').html(html);
+            $('#Layer_places').html(places.join(''));
         }
     }
 });
