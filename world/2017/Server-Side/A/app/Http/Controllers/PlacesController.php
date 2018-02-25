@@ -42,7 +42,7 @@ class PlacesController extends Controller
 
         /* Setting Validation Rules */
         $rules = [
-            'code' => 'required|unique:places',
+            'place_id' => 'required|unique:places',
             'name' => 'required|unique:places',
             'latitude' => 'required',
             'longitude' => 'required',
@@ -76,7 +76,7 @@ class PlacesController extends Controller
         }
 
         /* Storing Image */
-        $image_path = $data['image']->store('/');
+        $image_path = $data['image']->store('places');
 
         /* Compacting Data */
         unset($data['image']);
@@ -120,7 +120,7 @@ class PlacesController extends Controller
         $data = $request->except(['token', 'userRole']);
 
         /* Filtering Redundant Data(s) */
-        if (count(array_diff_key($data, ['name' => '', 'latitude' => '', 'longitude' => '', 'x' => '', 'y' => '', 'image' => '', 'description' => '']))) {
+        if (count(array_diff_key($data, ['place_id' => '', 'name' => '', 'latitude' => '', 'longitude' => '', 'x' => '', 'y' => '', 'image' => '', 'description' => '']))) {
             abort(400, 'data cannot be updated');
         }
 

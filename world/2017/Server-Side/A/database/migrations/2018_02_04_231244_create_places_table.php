@@ -20,7 +20,7 @@ class CreatePlacesTable extends Migration
             $table->string('name', 100)->default('');
             $table->integer('x')->default(0);
             $table->integer('y')->default(0);
-            $table->string('image_path', 50)->default('');
+            $table->text('image_path')->nullable();
             $table->text('description')->nullable();
         });
         DB::statement('ALTER TABLE `places` ADD `longitude` FLOAT NOT NULL DEFAULT 0 AFTER `name`, ADD `latitude` FLOAT NOT NULL DEFAULT 0 AFTER `name`');

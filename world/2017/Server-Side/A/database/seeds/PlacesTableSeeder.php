@@ -21,7 +21,7 @@ class PlacesTableSeeder extends Seeder
                 'longitude' => '54.3781',
                 'x' => '391',
                 'y' => '247',
-                'image_path' => '000.jpg',
+                'image_path' => 'places/000.jpg',
                 'description' => 'place0'
             ],
             [
@@ -32,7 +32,7 @@ class PlacesTableSeeder extends Seeder
                 'longitude' => '54.4141',
                 'x' => '503',
                 'y' => '352',
-                'image_path' => '001.jpg',
+                'image_path' => 'places/001.jpg',
                 'description' => 'place1'
             ],
             [
@@ -43,7 +43,7 @@ class PlacesTableSeeder extends Seeder
                 'longitude' => '54.4238',
                 'x' => '533',
                 'y' => '465',
-                'image_path' => '002.jpg',
+                'image_path' => 'places/002.jpg',
                 'description' => 'place2'
             ],
             [
@@ -54,7 +54,7 @@ class PlacesTableSeeder extends Seeder
                 'longitude' => '54.4724',
                 'x' => '684',
                 'y' => '581',
-                'image_path' => '003.jpg',
+                'image_path' => 'places/003.jpg',
                 'description' => 'place3'
             ],
             [
@@ -65,7 +65,7 @@ class PlacesTableSeeder extends Seeder
                 'longitude' => '54.5158',
                 'x' => '819',
                 'y' => '501',
-                'image_path' => '004.jpg',
+                'image_path' => 'places/004.jpg',
                 'description' => 'place4'
             ],
             [
@@ -76,7 +76,7 @@ class PlacesTableSeeder extends Seeder
                 'longitude' => '54.4952',
                 'x' => '755',
                 'y' => '290',
-                'image_path' => '005.jpg',
+                'image_path' => 'places/005.jpg',
                 'description' => 'place5'
             ],
             [
@@ -87,7 +87,7 @@ class PlacesTableSeeder extends Seeder
                 'longitude' => '54.3185',
                 'x' => '206',
                 'y' => '453',
-                'image_path' => '006.jpg',
+                'image_path' => 'places/006.jpg',
                 'description' => 'place6'
             ],
             [
@@ -98,7 +98,7 @@ class PlacesTableSeeder extends Seeder
                 'longitude' => '54.3739',
                 'x' => '378',
                 'y' => '421',
-                'image_path' => '007.jpg',
+                'image_path' => 'places/007.jpg',
                 'description' => 'place7'
             ],
             [
@@ -109,7 +109,7 @@ class PlacesTableSeeder extends Seeder
                 'longitude' => '54.4563',
                 'x' => '634',
                 'y' => '411',
-                'image_path' => '008.jpg',
+                'image_path' => 'places/008.jpg',
                 'description' => 'place8'
             ],
             [
@@ -120,7 +120,7 @@ class PlacesTableSeeder extends Seeder
                 'longitude' => '54.6146',
                 'x' => '1126',
                 'y' => '611',
-                'image_path' => '009.jpg',
+                'image_path' => 'places/009.jpg',
                 'description' => 'place9'
             ],
             [
@@ -131,7 +131,7 @@ class PlacesTableSeeder extends Seeder
                 'longitude' => '54.4321',
                 'x' => '559',
                 'y' => '562',
-                'image_path' => '010.jpg',
+                'image_path' => 'places/010.jpg',
                 'description' => 'place10'
             ]
         ];
