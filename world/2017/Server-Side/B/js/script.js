@@ -2,6 +2,10 @@ const app = new Vue({
     el: '#app',
     data: {
         baseAPIUrl: '../A/api/v1',
+        message: {
+            type: '',
+            content: ''
+        },
         user: {
             token: '',
             role: ''
@@ -12,13 +16,19 @@ const app = new Vue({
                 password: '1234'
             },
             search: {
-                fromPlaceId: '',
-                toPlaceId: '',
-                departureTime: ''
+                fromPlaceId: '000',
+                toPlaceId: '010',
+                departureTime: '00:00:00'
             }
-        }
+        },
+        places: []
     },
     methods: {
+        launchMessage: function (type, content) {
+            this.message.type = type;
+            this.message.content = content;
+            $('#messageBox').modal();
+        },
         userLogin: function () {
             var self = this;
 
@@ -26,14 +36,17 @@ const app = new Vue({
             $.ajax({
                 url: self.baseAPIUrl + '/auth/login',
                 type: 'post',
-                dataType: 'json',
-                data: JSON.stringify(self.forms.auth),
                 contentType: 'application/json',
+                data: JSON.stringify(self.forms.auth),
+                dataType: 'json',
                 success: function (response) {
+                    self.launchMessage('success', 'Login Success');
                     self.user.token = response.token;
+                    self.getPlacesList();
                 },
                 statusCode: {
                     401: function (response) {
+                        self.launchMessage('danger', response.responseJSON.message);
                     }
                 }
             });
@@ -45,22 +58,22 @@ const app = new Vue({
             $.ajax({
                 url: self.baseAPIUrl + '/auth/logout',
                 type: 'get',
-                dataType: 'text',
                 data: {
                     token: self.user.token
                 },
-                contentType: 'application/json',
+                dataType: 'json',
                 success: function (response) {
+                    self.launchMessage('success', 'Logout Success');
                     self.user.token = '';
                 },
                 statusCode: {
                     401: function (response) {
-                        //
+                        self.launchMessage('danger', response.responseJSON.message);
                     }
                 }
             });
         },
-        routeSearch: function () {
+        routesSearch: function () {
             var self = this;
 
             if (!self.user.token) {
@@ -68,25 +81,40 @@ const app = new Vue({
                 return;
             }
 
-            if (self.forms.search.departureTime) {
-                self.forms.search.departureTime += ':00';
-            }
-
             /* Sending Ajax To Search Routes */
             $.ajax({
                 url: self.baseAPIUrl + `/route/search/${self.forms.search.fromPlaceId}/${self.forms.search.toPlaceId}/${self.forms.search.departureTime}`,
                 type: 'get',
-                dataType: 'text',
+                contentType: 'application/json',
                 data: {
                     token: self.user.token
                 },
-                contentType: 'application/json',
                 success: function (response) {
-                    console.log(JSON.parse(response));
+                    //
                 },
                 statusCode: {
                     401: function (response) {
-                        //
+                        self.launchMessage('danger', response.responseJSON.message);
+                    }
+                }
+            });
+        },
+        getPlacesList: function () {
+            var self = this;
+
+            $.ajax({
+                url: self.baseAPIUrl + '/place',
+                type: 'get',
+                contentType: 'application/json',
+                data: {
+                    token: self.user.token
+                },
+                success: function (response) {
+                    self.places = response;
+                },
+                statusCode: {
+                    401: function (response) {
+                        self.launchMessage('danger', response.responseJSON.message);
                     }
                 }
             });

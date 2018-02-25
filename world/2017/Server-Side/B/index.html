@@ -50,19 +50,22 @@
                 <div class="row">
                     <div class="col-sm-3 col-md-2 d-sm-block bg-light sidebar">
                         <div class="container">
-                            <form v-on:submit.prevent="routeSearch">
+                            <form v-on:submit.prevent="routesSearch">
                                 <div class="form-group">
                                     <label>Source Location</label>
-                                    <input type="text" class="form-control" placeholder="Source location" required v-model="forms.search.fromPlaceId">
+                                    <input type="text" class="form-control" placeholder="Source location" list="places" v-model="forms.search.fromPlaceId">
                                 </div>
                                 <div class="form-group">
                                     <label>Target Location</label>
-                                    <input type="text" class="form-control" placeholder="Target Location" required v-model="forms.search.toPlaceId">
+                                    <input type="text" class="form-control" placeholder="Target Location" list="places" v-model="forms.search.toPlaceId">
                                 </div>
                                 <div class="form-group">
                                     <label>Departure Time</label>
-                                    <input type="time" class="form-control" v-model="forms.search.departureTime">
+                                    <input type="time" class="form-control" step="1" v-model="forms.search.departureTime">
                                 </div>
+                                <datalist id="places">
+                                    <option v-for="place in places" :value="place.name">{{ place.place_id }}</option>
+                                </datalist>
                                 <button type="submit" class="btn btn-primary">Get Routes</button>
                             </form>
                             <br>
@@ -1004,6 +1007,27 @@
                         </svg>
                     </main>
 
+                </div>
+            </div>
+
+            <!-- Message Box -->
+            <div class="modal fade panel" id="messageBox">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="modal-title">
+                                <h3>Message</h3>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert" v-bind:class="'alert-' + message.type">
+                                <p>{{ message.content }}</p>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
