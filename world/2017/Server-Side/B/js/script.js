@@ -25,6 +25,7 @@ const app = new Vue({
     },
     mounted: function () {
         this.getPlacesList();
+        this.popoverPlaces();
     },
     methods: {
         launchMessage: function (type, content) {
@@ -141,10 +142,10 @@ const app = new Vue({
 
             this.places.forEach(function (place, i) {
                 places.push(`
-                    <circle cx="${place.x}" cy="${place.y}" r="8" data-place-id="${place.place_id}" data-toggle="popover"></circle>
-                    <text x="${place.x - 30}" y="${place.y + 30}" data-place-id="${place.place_id}">${place.name}</text>
+                    <circle cx="${place.x}" cy="${place.y}" r="8" title="${place.name + ' ' + place.place_id}" data-place-id="${place.place_id}" data-toggle="popover"></circle>
+                    <text x="${place.x - 30}" y="${place.y + 30}" title="${place.name + ' ' + place.place_id}" data-place-id="${place.place_id}">${place.name}</text>
                     <div id="placeData${place.place_id}">
-                        <img src="../A/public/img/${place.image_path}">
+                        <img src="../A/public/img/${place.image_path}" width="200px">
                         <br>Description:</br>
                         <span>${place.description}</span>
                     </div>
@@ -152,6 +153,24 @@ const app = new Vue({
             });
 
             $('#Layer_places').html(places.join(''));
+        },
+        popoverPlaces: function () {
+            $('svg').popover({
+                selector: '#Layer_places circle, #Layer_places text',
+                trigger: 'click',
+                placement: 'bottom',
+                html: true,
+                content: function () {
+                    var placeId = this.dataset.placeId;
+                    return $('#placeData' + placeId).html();
+                }
+            }).click(function (event) {
+                $('#Layer_places *').each(function () {
+                    if (!$(this).is(event.target)) {
+                        $(this).popover('hide');
+                    }
+                });
+            });
         }
     }
 });
