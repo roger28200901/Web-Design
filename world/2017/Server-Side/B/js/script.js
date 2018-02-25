@@ -127,6 +127,7 @@ const app = new Vue({
                 },
                 success: function (response) {
                     self.places = response;
+                    self.drawPlaces();
                 },
                 statusCode: {
                     401: function (response) {
@@ -134,6 +135,17 @@ const app = new Vue({
                     }
                 }
             });
+        },
+        drawPlaces: function () {
+            var html = '';
+
+            this.places.forEach(function (place, i) {
+                html += `<circle class="point-${i}" cx="${place.x}" cy="${place.y}" r="8" data-toggle="popover" title="${place.name + ' ' + place.place_id}"></circle>`;
+                html += `<text class="point-${i}" x="${place.x - 30}" y="${place.y + 25}" data-toggle="popover" title="${place.name}">${place.name}</text>`;
+                html += `<span id="point-${i}"><img src="../A/public/img/${place.image_path}">Description: <br>${place.description}</span>`;
+            });
+
+            $('#Layer_places').html(html);
         }
     }
 });
