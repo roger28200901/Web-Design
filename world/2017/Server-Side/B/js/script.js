@@ -16,12 +16,15 @@ const app = new Vue({
                 password: '1234'
             },
             search: {
-                fromPlaceId: '000',
-                toPlaceId: '010',
+                fromPlace: 'Danube Delta',
+                toPlace: 'Corniche Beach',
                 departureTime: '00:00:00'
             }
         },
         places: []
+    },
+    mounted: function () {
+        this.getPlacesList();
     },
     methods: {
         launchMessage: function (type, content) {
@@ -73,7 +76,7 @@ const app = new Vue({
                 }
             });
         },
-        routesSearch: function () {
+        searchRoutes: function () {
             var self = this;
 
             if (!self.user.token) {
@@ -81,9 +84,21 @@ const app = new Vue({
                 return;
             }
 
+            var fromPlaceId = '',
+                toPlaceId = '';
+
+            self.places.forEach(function (place) {
+                if (place.name == self.forms.search.fromPlace) {
+                    fromPlaceId = place.place_id;
+                }
+                if (place.name == self.forms.search.toPlace) {
+                    toPlaceId = place.place_id;
+                }
+            });
+
             /* Sending Ajax To Search Routes */
             $.ajax({
-                url: self.baseAPIUrl + `/route/search/${self.forms.search.fromPlaceId}/${self.forms.search.toPlaceId}/${self.forms.search.departureTime}`,
+                url: self.baseAPIUrl + `/route/search/${fromPlaceId}/${toPlaceId}/${self.forms.search.departureTime}`,
                 type: 'get',
                 contentType: 'application/json',
                 data: {
@@ -102,6 +117,7 @@ const app = new Vue({
         getPlacesList: function () {
             var self = this;
 
+            /* Sending Ajax To Get Places List */
             $.ajax({
                 url: self.baseAPIUrl + '/place',
                 type: 'get',

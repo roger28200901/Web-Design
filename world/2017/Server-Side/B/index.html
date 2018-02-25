@@ -50,14 +50,14 @@
                 <div class="row">
                     <div class="col-sm-3 col-md-2 d-sm-block bg-light sidebar">
                         <div class="container">
-                            <form v-on:submit.prevent="routesSearch">
+                            <form v-on:submit.prevent="searchRoutes">
                                 <div class="form-group">
                                     <label>Source Location</label>
-                                    <input type="text" class="form-control" placeholder="Source location" list="places" v-model="forms.search.fromPlaceId">
+                                    <input type="text" class="form-control" placeholder="Source location" list="places" v-model="forms.search.fromPlace">
                                 </div>
                                 <div class="form-group">
                                     <label>Target Location</label>
-                                    <input type="text" class="form-control" placeholder="Target Location" list="places" v-model="forms.search.toPlaceId">
+                                    <input type="text" class="form-control" placeholder="Target Location" list="places" v-model="forms.search.toPlace">
                                 </div>
                                 <div class="form-group">
                                     <label>Departure Time</label>
@@ -1020,9 +1020,7 @@
                             </div>
                         </div>
                         <div class="modal-body">
-                            <div class="alert" v-bind:class="'alert-' + message.type">
-                                <p>{{ message.content }}</p>
-                            </div>
+                            <p class="alert" v-bind:class="'alert-' + message.type">{{ message.content }}</p>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
