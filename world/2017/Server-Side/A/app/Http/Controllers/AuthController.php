@@ -34,7 +34,7 @@ class AuthController extends Controller
 
         /* Getting User Via Username And Password */
         $user = User::where('username', $request->username)->first();
-        if (!$user || Hash::check($user->password, $request->password)) {
+        if (!$user || !Hash::check($request->password, $user->password)) {
             abort(401, 'invalid login'); // Throwing Invalid Login Exception
         }
 
