@@ -58,7 +58,6 @@ const app = new Vue({
                     self.launchMessage('success', 'Login Success');
                     self.user.token = response.token;
                     self.user.role = response.role;
-                    self.getPlacesList();
                 },
                 statusCode: {
                     401: function (response) {
