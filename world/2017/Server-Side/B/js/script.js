@@ -46,6 +46,7 @@ const app = new Vue({
                 success: function (response) {
                     self.launchMessage('success', 'Login Success');
                     self.user.token = response.token;
+                    self.user.role = response.role;
                     self.getPlacesList();
                 },
                 statusCode: {
