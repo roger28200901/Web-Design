@@ -17,5 +17,15 @@ class UsersTableSeeder extends Seeder
             'password' => '1234',
             'role' => 'ADMIN'
         ]);
+        User::create([
+            'username' => 'user1',
+            'password' => '1234',
+            'role' => 'USER'
+        ]);
+        User::create([
+            'username' => 'user2',
+            'password' => '1234',
+            'role' => 'USER'
+        ]);
     }
 }
