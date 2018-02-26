@@ -19,6 +19,17 @@ const app = new Vue({
                 fromPlace: 'Danube Delta',
                 toPlace: 'Corniche Beach',
                 departureTime: '00:00:00'
+            },
+            place: {
+                mode: '',
+                placeId: '011',
+                name: 'Place name',
+                latitude: '0',
+                longitude: '0',
+                x: '0',
+                y: '0',
+                image: '',
+                description: 'Description'
             }
         },
         places: []
@@ -106,6 +117,7 @@ const app = new Vue({
                 data: {
                     token: self.user.token
                 },
+                dataType: 'json',
                 success: function (response) {
                     //
                 },
@@ -127,6 +139,7 @@ const app = new Vue({
                 data: {
                     token: self.user.token
                 },
+                dataType: 'json',
                 success: function (response) {
                     self.places = response;
                     self.drawPlaces();
@@ -135,6 +148,39 @@ const app = new Vue({
                     401: function (response) {
                         self.launchMessage('danger', response.responseJSON.message);
                     }
+                }
+            });
+        },
+        createPlace: function () {
+            this.forms.place.mode = 'CREATE';
+            $('#createPlaceForm').modal();
+        },
+        storePlace: function () {
+            var self = this;
+
+            $('#createPlaceForm').modal('hide');
+
+            var formData = new FormData();
+            formData.append('place_id', self.forms.place.placeId);
+            formData.append('name', self.forms.place.name);
+            formData.append('latitude', self.forms.place.latitude);
+            formData.append('longitude', self.forms.place.longitude);
+            formData.append('image', document.getElementById('placeImage').files[0]);
+            formData.append('description', self.forms.place.description);
+
+            /* Sending Ajax To Store Place */
+            $.ajax({
+                url: self.baseAPIUrl + `/place?token=${self.user.token}`,
+                type: 'post',
+                contentType: 'multipart/form-data',
+                data: formData,
+                processData: false,
+                dataType: 'json',
+                success: function (response) {
+                    self.launchMessage('success', response.message);
+                },
+                error: function (response) {
+                    self.launchMessage('danger', response.responseJSON.message);
                 }
             });
         },
