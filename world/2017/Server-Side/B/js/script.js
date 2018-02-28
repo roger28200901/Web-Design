@@ -158,7 +158,7 @@ const app = new Vue({
         },
         createPlace: function () {
             this.forms.place.mode = 'CREATE';
-            $('#createPlaceForm').modal();
+            $('#placeForm').modal();
         },
         storePlace: function () {
             var self = this;
@@ -196,7 +196,7 @@ const app = new Vue({
             this.forms.place.latitude = place.latitude;
             this.forms.place.longitude = place.longitude;
             this.forms.place.description = place.description;
-            $('#createPlaceForm').modal();
+            $('#placeForm').modal();
             $('#placeListPanel').modal('hide');
         },
         drawPlaces: function () {
