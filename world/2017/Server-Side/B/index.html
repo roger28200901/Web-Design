@@ -1106,7 +1106,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="place in places">
+                                    <tr v-for="(place, index) in places">
                                         <td>{{ place.place_id }}</td>
                                         <td>{{ place.name }}</td>
                                         <td>{{ place.latitude }}</td>
@@ -1114,7 +1114,7 @@
                                         <td>{{ place.image_path }}</td>
                                         <td>{{ place.description }}</td>
                                         <td>
-                                            <button class="btn btn-primary">Edit</button>
+                                            <button class="btn btn-primary" v-on:click="editPlace(index)">Edit</button>
                                             <button class="btn btn-danger">Delete</button>
                                         </td>
                                     </tr>
