@@ -3,25 +3,76 @@ const app = new Vue({
     data: {
         baseAPIUrl: '../A/api/v1',
         message: {
-            type: '',
-            content: ''
+            type: null,
+            content: null
         },
         user: {
-            token: '',
-            role: ''
+            token: null,
+            role: null
         },
         forms: {
             auth: {
-                username: 'admin',
-                password: '1234'
+                username: null,
+                password: null
             },
             search: {
+                fromPlace: null,
+                toPlace: null,
+                departureTime: null
+            },
+            place: {
+                mode: null,
+                id: null,
+                placeId: null,
+                name: null,
+                latitude: null,
+                longitude: null,
+                x: null,
+                y: null,
+                image: null,
+                description: null
+            }
+        },
+        places: []
+    },
+    mounted: function () {
+        this.refresh();
+        this.initialDatas();
+    },
+    methods: {
+        refresh: function () {
+            this.getPlacesList();
+            this.popoverPlaces();
+        },
+        initialDatas: function () {
+            this.initialUserData();
+            this.initialAuthData();
+            this.initialSearchData();
+            this.initialPlaceData();
+        },
+        initialUserData: function () {
+            this.user = {
+                token: '',
+                role: '',
+            };
+        },
+        initialAuthData: function () {
+            this.forms.auth = {
+                username: 'admin',
+                password: '1234'
+            }
+        },
+        initialSearchData: function () {
+            this.search = {
                 fromPlace: 'Danube Delta',
                 toPlace: 'Corniche Beach',
                 departureTime: '00:00:00'
-            },
-            place: {
+            };
+        },
+        initialPlaceData: function () {
+            this.forms.place = {
                 mode: '',
+                id: '',
                 placeId: '011',
                 name: 'Place name',
                 latitude: '24.59895',
@@ -30,17 +81,7 @@ const app = new Vue({
                 y: '0',
                 image: '',
                 description: 'Description'
-            }
-        },
-        places: []
-    },
-    mounted: function () {
-        this.refresh();
-    },
-    methods: {
-        refresh: function () {
-            this.getPlacesList();
-            this.popoverPlaces();
+            };
         },
         launchMessage: function (type, content) {
             this.message.type = type;
@@ -82,7 +123,7 @@ const app = new Vue({
                 dataType: 'json',
                 success: function (response) {
                     self.launchMessage('success', 'Logout Success');
-                    self.user.token = '';
+                    self.initialUserData();
                 },
                 statusCode: {
                     401: function (response) {
@@ -158,6 +199,7 @@ const app = new Vue({
         },
         createPlace: function () {
             this.forms.place.mode = 'CREATE';
+            this.initialPlaceData();
             $('#placeForm').modal();
         },
         storePlace: function () {
@@ -193,6 +235,7 @@ const app = new Vue({
         editPlace: function (index) {
             var place = this.places[index];
             this.forms.place.mode = 'EDIT';
+            this.forms.place.id = place.id;
             this.forms.place.placeId = place.place_id;
             this.forms.place.name = place.name;
             this.forms.place.latitude = place.latitude;
