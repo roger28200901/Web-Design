@@ -180,6 +180,7 @@ const app = new Vue({
                 processData: false,
                 dataType: 'json',
                 success: function (response) {
+                    $('#placeForm').modal('hide');
                     self.launchMessage('success', response.message);
                     self.refresh();
                 },
