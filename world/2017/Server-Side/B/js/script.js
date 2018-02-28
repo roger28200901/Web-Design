@@ -24,8 +24,8 @@ const app = new Vue({
                 mode: '',
                 placeId: '011',
                 name: 'Place name',
-                latitude: '0',
-                longitude: '0',
+                latitude: '24.59895',
+                longitude: '54.2522',
                 x: '0',
                 y: '0',
                 image: '',
@@ -35,10 +35,13 @@ const app = new Vue({
         places: []
     },
     mounted: function () {
-        this.getPlacesList();
-        this.popoverPlaces();
+        this.refresh();
     },
     methods: {
+        refresh: function () {
+            this.getPlacesList();
+            this.popoverPlaces();
+        },
         launchMessage: function (type, content) {
             this.message.type = type;
             this.message.content = content;
@@ -177,6 +180,7 @@ const app = new Vue({
                 dataType: 'json',
                 success: function (response) {
                     self.launchMessage('success', response.message);
+                    self.refresh();
                 },
                 error: function (response) {
                     self.launchMessage('danger', response.responseJSON.message);
