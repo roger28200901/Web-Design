@@ -130,6 +130,9 @@ const app = new Vue({
                 }
             });
         },
+        showPlacesList: function () {
+            $('#placeListPanel').modal();
+        },
         getPlacesList: function () {
             var self = this;
 
