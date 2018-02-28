@@ -1050,7 +1050,7 @@
                             </div>
                         </div>
                         <div class="modal-body">
-                            <form v-on:submit.prevent="'CREATE' === forms.place.mode ? storePlace() : updatePlace(forms.place.id)">
+                            <form v-on:submit.prevent="'CREATE' === forms.place.mode ? storePlace() : updatePlace()">
                                 <div class="form-group">
                                     <label>ID</label>
                                     <input type="text" class="form-control" placeholder="Place ID" required v-model="forms.place.placeId">
