@@ -190,6 +190,17 @@ const app = new Vue({
                 }
             });
         },
+        editPlace: function (index) {
+            var place = this.places[index];
+            this.forms.place.mode = 'EDIT';
+            this.forms.place.placeId = place.place_id;
+            this.forms.place.name = place.name;
+            this.forms.place.latitude = place.latitude;
+            this.forms.place.longitude = place.longitude;
+            this.forms.place.description = place.description;
+            $('#createPlaceForm').modal();
+            $('#placeListPanel').modal('hide');
+        },
         drawPlaces: function () {
             var places = [];
 
