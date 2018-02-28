@@ -68,7 +68,7 @@ class PlacesController extends Controller
             abort(422, 'data cannot be processed');
         }
 
-        /* Checking Extension Of Image */
+        /* Checking File And Extension Of Image */
         if (!$request->hasFile('image') || !preg_match('/(image)\.*/', $data['image']->getMimeType())) {
             abort(422, 'data cannot be processed');
         }
@@ -119,6 +119,11 @@ class PlacesController extends Controller
 
         /* Filtering Redundant Data(s) */
         if (count(array_diff_key($data, ['place_id' => '', 'name' => '', 'latitude' => '', 'longitude' => '', 'image' => '', 'description' => '']))) {
+            abort(400, 'data cannot be updated');
+        }
+
+        /* Checking File */
+        if (!$request->hasFile('image')) {
             abort(400, 'data cannot be updated');
         }
 
