@@ -1045,8 +1045,8 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <div class="modal-title">
-                                <h3 v-show="'CREATE' === forms.place.mode">New Place</h3>
-                                <h3 v-show="'EDIT' === forms.place.mode">New Place</h3>
+                                <h3 v-if="'CREATE' === forms.place.mode">New Place</h3>
+                                <h3 v-else>Edit Place</h3>
                             </div>
                         </div>
                         <div class="modal-body">
@@ -1075,7 +1075,8 @@
                                     <label>Description</label>
                                     <textarea type="number" class="form-control" placeholder="Description" v-model="forms.place.description"></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Create Place</button>
+                                <button type="submit" class="btn btn-primary" v-if="'CREATE' === forms.place.mode">Create Place</button>
+                                <button type="submit" class="btn btn-primary" v-else>Update Place</button>
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                             </form>
                         </div>
