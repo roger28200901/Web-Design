@@ -16,8 +16,6 @@ class Place extends Model
         'name',
         'latitude',
         'longitude',
-        'x',
-        'y',
         'image_path',
         'description'
     ];
