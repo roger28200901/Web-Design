@@ -69,7 +69,7 @@ class PlacesController extends Controller
         }
 
         /* Checking Extension Of Image */
-        if (!preg_match('/(image)\.*/', $data['image']->getMimeType())) {
+        if (!$request->hasFile('image') || !preg_match('/(image)\.*/', $data['image']->getMimeType())) {
             abort(422, 'data cannot be processed');
         }
 
