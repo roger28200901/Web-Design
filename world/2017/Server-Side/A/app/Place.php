@@ -19,10 +19,41 @@ class Place extends Model
         'image_path',
         'description'
     ];
+    
+    private $longitude_start = 54.2522;
+    private $longitude_end = 54.66419;
+    private $latitude_start = 24.35429;
+    private $latitude_end = 24.59895;
+    private $map_width = 1280;
+    private $map_height = 800;
 
     protected $table = 'places';
 
     public $timestamps = false;
+
+    /**
+     * Set the place's longitude and calculate x with longitude.
+     *
+     * @param  string  $longitude
+     * @return void
+     */
+    public function setLongitudeAttribute($longitude)
+    {
+        $this->attributes['longitude'] = $longitude;
+        $this->attributes['x'] = ($longitude - $this->longitude_start) * $this->map_width / ($this->longitude_end - $this->longitude_start);
+    }
+
+    /**
+     * Set the place's latitude and calculate y with latitude.
+     *
+     * @param  string  $latitude
+     * @return void
+     */
+    public function setLatitudeAttribute($latitude)
+    {
+        $this->attributes['latitude'] = $latitude;
+        $this->attributes['y'] = ($this->latitude_end - $latitude) * $this->map_height / ($this->latitude_end - $this->latitude_start);
+    }
 
     /**
      * Get the schedules which depart from this place.
