@@ -163,8 +163,6 @@ const app = new Vue({
         storePlace: function () {
             var self = this;
 
-            $('#createPlaceForm').modal('hide');
-
             var formData = new FormData();
             formData.append('place_id', self.forms.place.placeId);
             formData.append('name', self.forms.place.name);
