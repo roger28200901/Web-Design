@@ -46,8 +46,6 @@ class PlacesController extends Controller
             'name' => 'required|unique:places',
             'latitude' => 'required',
             'longitude' => 'required',
-            'x' => 'required',
-            'y' => 'required',
             'image' => 'required',
             'description' => ''
         ];
@@ -66,7 +64,7 @@ class PlacesController extends Controller
         }
 
         /* Checking Duplicated Row(s) */
-        if (Place::where(['latitude' => $data['latitude'], 'longitude' => $data['longitude']])->orWhere(['x' => $data['x'], 'y' => $data['y']])->first()) {
+        if (Place::where(['latitude' => $data['latitude'], 'longitude' => $data['longitude']])->first()) {
             abort(422, 'data cannot be processed');
         }
 
@@ -120,7 +118,7 @@ class PlacesController extends Controller
         $data = $request->except(['token', 'userRole']);
 
         /* Filtering Redundant Data(s) */
-        if (count(array_diff_key($data, ['place_id' => '', 'name' => '', 'latitude' => '', 'longitude' => '', 'x' => '', 'y' => '', 'image' => '', 'description' => '']))) {
+        if (count(array_diff_key($data, ['place_id' => '', 'name' => '', 'latitude' => '', 'longitude' => '', 'image' => '', 'description' => '']))) {
             abort(400, 'data cannot be updated');
         }
 
