@@ -171,7 +171,7 @@ const app = new Vue({
             $.ajax({
                 url: self.baseAPIUrl + `/place?token=${self.user.token}`,
                 type: 'post',
-                contentType: 'multipart/form-data',
+                contentType: false,
                 data: formData,
                 processData: false,
                 dataType: 'json',
