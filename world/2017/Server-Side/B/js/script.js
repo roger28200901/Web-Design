@@ -163,6 +163,8 @@ const app = new Vue({
         storePlace: function () {
             var self = this;
 
+            $('#placeForm').modal('hide');
+
             var formData = new FormData();
             formData.append('place_id', self.forms.place.placeId);
             formData.append('name', self.forms.place.name);
@@ -180,7 +182,6 @@ const app = new Vue({
                 processData: false,
                 dataType: 'json',
                 success: function (response) {
-                    $('#placeForm').modal('hide');
                     self.launchMessage('success', response.message);
                     self.refresh();
                 },
