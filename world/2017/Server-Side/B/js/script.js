@@ -63,7 +63,7 @@ const app = new Vue({
             }
         },
         initialSearchData: function () {
-            this.search = {
+            this.forms.search = {
                 fromPlace: 'Danube Delta',
                 toPlace: 'Corniche Beach',
                 departureTime: '00:00:00'
