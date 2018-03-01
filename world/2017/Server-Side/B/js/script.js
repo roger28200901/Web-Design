@@ -278,6 +278,28 @@ const app = new Vue({
                 }
             });
         },
+        destroyPlace: function (index) {
+            var self = this;
+
+            $('#placeListPanel').modal('hide');
+
+            /* Sending Ajax To Delete Place */
+            $.ajax({
+                url: self.baseAPIUrl + `/place/${self.places[index].id}`,
+                type: 'delete',
+                data: {
+                    token: self.user.token
+                },
+                dataType: 'json',
+                success: function (response) {
+                    self.launchMessage('success', response.message);
+                    self.refresh();
+                },
+                error: function (response) {
+                    self.launchMessage('danger', response.responseJSON.message);
+                }
+            });
+        },
         drawPlaces: function () {
             var places = [];
 
