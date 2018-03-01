@@ -59,7 +59,7 @@ const app = new Vue({
         initialAuthData: function () {
             this.forms.auth = {
                 username: 'admin',
-                password: '1234'
+                password: 'adminpass'
             }
         },
         initialSearchData: function () {
