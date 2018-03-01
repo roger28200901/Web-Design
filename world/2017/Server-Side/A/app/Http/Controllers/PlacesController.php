@@ -123,7 +123,7 @@ class PlacesController extends Controller
         }
 
         /* Checking File */
-        if (!$request->hasFile('image')) {
+        if ($request->has('image') && !$request->hasFile('image')) {
             abort(400, 'data cannot be updated');
         }
 
