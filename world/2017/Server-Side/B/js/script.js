@@ -198,8 +198,8 @@ const app = new Vue({
             });
         },
         createPlace: function () {
-            this.forms.place.mode = 'CREATE';
             this.initialPlaceData();
+            this.forms.place.mode = 'CREATE';
             $('#placeForm').modal();
         },
         storePlace: function () {
@@ -243,6 +243,36 @@ const app = new Vue({
             this.forms.place.description = place.description;
             $('#placeForm').modal();
             $('#placeListPanel').modal('hide');
+        },
+        updatePlace: function () {
+            var self = this;
+
+            $('#placeForm').modal('hide');
+
+            var formData = new FormData();
+            formData.append('place_id', self.forms.place.placeId);
+            formData.append('name', self.forms.place.name);
+            formData.append('latitude', self.forms.place.latitude);
+            formData.append('longitude', self.forms.place.longitude);
+            formData.append('image', document.getElementById('placeImage').files[0]);
+            formData.append('description', self.forms.place.description);
+
+            /* Sending Ajax To Update Place */
+            $.ajax({
+                url: self.baseAPIUrl + `/place/${self.forms.place.id}?token=${self.user.token}`,
+                type: 'post',
+                contentType: false,
+                data: formData,
+                processData: false,
+                dataType: 'json',
+                success: function (response) {
+                    self.launchMessage('success', response.message);
+                    self.refresh();
+                },
+                error: function (response) {
+                    self.launchMessage('danger', response.responseJSON.message);
+                }
+            });
         },
         drawPlaces: function () {
             var places = [];
