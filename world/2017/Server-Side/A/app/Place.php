@@ -19,7 +19,7 @@ class Place extends Model
         'image_path',
         'description'
     ];
-    
+
     private $longitude_start = 54.2522;
     private $longitude_end = 54.66419;
     private $latitude_start = 24.35429;
