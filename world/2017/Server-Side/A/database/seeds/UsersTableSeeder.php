@@ -14,17 +14,17 @@ class UsersTableSeeder extends Seeder
     {
         User::create([
             'username' => 'admin',
-            'password' => '1234',
+            'password' => 'adminpass',
             'role' => 'ADMIN'
         ]);
         User::create([
             'username' => 'user1',
-            'password' => '1234',
+            'password' => 'user1pass',
             'role' => 'USER'
         ]);
         User::create([
             'username' => 'user2',
-            'password' => '1234',
+            'password' => 'user2pass',
             'role' => 'USER'
         ]);
     }
