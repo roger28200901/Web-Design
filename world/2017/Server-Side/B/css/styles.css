@@ -91,3 +91,17 @@ h1 {
     transform: scale(1.5);
     transform-origin: center;
 }
+
+#Layer_schedules line {
+    stroke: red;
+    stroke-linecap: round;
+    stroke-width: 7px;
+}
+
+#Layer_schedules line.type-BUS {
+    stroke-dasharray: 20;
+}
+
+#scheduleArrow {
+    fill: red;
+}
