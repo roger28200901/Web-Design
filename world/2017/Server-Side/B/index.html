@@ -25,7 +25,7 @@
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="placesFunctionalitiesDropDownMenuLink" style="width: 200px">
                                 <a class="dropdown-item" v-on:click="createPlace">Create Place</a>
                                 <a class="dropdown-item" v-on:click="showPlacesList">Update Place</a>
-                                <a class="dropdown-item">Delete Place</a>
+                                <a class="dropdown-item" v-on:click="showPlacesList">Delete Place</a>
                             </div>
                         </li>
                         <!-- Authorized -->
@@ -1116,7 +1116,7 @@
                                         <td>{{ place.description }}</td>
                                         <td>
                                             <button class="btn btn-primary" v-on:click="editPlace(index)">Edit</button>
-                                            <button class="btn btn-danger">Delete</button>
+                                            <button class="btn btn-danger" v-on:click="destroyPlace(index)">Delete</button>
                                         </td>
                                     </tr>
                                 </tbody>
