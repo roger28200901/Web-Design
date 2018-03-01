@@ -254,7 +254,9 @@ const app = new Vue({
             formData.append('name', self.forms.place.name);
             formData.append('latitude', self.forms.place.latitude);
             formData.append('longitude', self.forms.place.longitude);
-            formData.append('image', document.getElementById('placeImage').files[0]);
+            if (document.getElementById('placeImage').files[0]) {
+                formData.append('image', document.getElementById('placeImage').files[0]);
+            }
             formData.append('description', self.forms.place.description);
 
             /* Sending Ajax To Update Place */
