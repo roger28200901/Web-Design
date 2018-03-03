@@ -42,7 +42,7 @@ class AuthController extends Controller
         $user->login();
 
         /* Returning Response */
-        return response()->json(['token' => $user->token, 'role' => $user->role]);
+        return response()->json(['token' => $user->token, 'role' => $user->role])->setStatusCode(200, 'token generated');
     }
 
     /**
