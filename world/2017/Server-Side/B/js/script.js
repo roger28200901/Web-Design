@@ -165,6 +165,7 @@ const app = new Vue({
                 success: function (response) {
                     self.routes = response;
                     self.drawSchedule(self.routes[0]);
+                    self.storeHistory(fromPlaceId, toPlaceId, self.routes[0].schedules);
                 },
                 statusCode: {
                     401: function (response) {
@@ -182,6 +183,32 @@ const app = new Vue({
                 });
             }
             $('#Layer_schedules').html(schedules.join(''));
+        },
+        storeHistory: function (fromPlaceId, toPlaceId, schedules) {
+            var self = this;
+
+            var scheduleId = [];
+            schedules.forEach(function (schedule) {
+                scheduleId.push(schedule.id);
+            });
+
+            /* Sending Ajax To Store Search History */
+            $.ajax({
+                url: self.baseAPIUrl + `/route/selection?token=${self.user.token}`,
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    from_place_id: fromPlaceId,
+                    to_place_id: toPlaceId,
+                    schedule_id: scheduleId
+                }),
+                dataType: 'json',
+                statusCode: {
+                    422: function (response) {
+                        self.launchMessage('danger', response.responseJSON.message);
+                    }
+                }
+            });
         },
         showPlacesList: function () {
             $('#placeListPanel').modal();
