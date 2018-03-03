@@ -164,7 +164,7 @@ const app = new Vue({
                 dataType: 'json',
                 success: function (response) {
                     self.routes = response;
-                    self.drawSchedules(self.routes[0]);
+                    self.drawSchedule(self.routes[0]);
                 },
                 statusCode: {
                     401: function (response) {
@@ -173,7 +173,7 @@ const app = new Vue({
                 }
             });
         },
-        drawSchedules: function (route) {
+        drawSchedule: function (route) {
             var schedules = [];
 
             if (route) {
