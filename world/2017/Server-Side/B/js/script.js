@@ -164,7 +164,7 @@ const app = new Vue({
                 dataType: 'json',
                 success: function (response) {
                     self.routes = response;
-                    self.drawSchedules();
+                    self.drawSchedules(self.routes[0]);
                 },
                 statusCode: {
                     401: function (response) {
@@ -173,11 +173,11 @@ const app = new Vue({
                 }
             });
         },
-        drawSchedules: function () {
+        drawSchedules: function (route) {
             var schedules = [];
 
-            if (this.routes.length) {
-                this.routes[0].schedules.forEach(function (schedule, i) {
+            if (route) {
+                route.schedules.forEach(function (schedule, i) {
                     schedules.push(`<line class="type-${schedule.type}" x1="${schedule.from_place.x}" y1="${schedule.from_place.y}" x2="${schedule.to_place.x}" y2="${schedule.to_place.y}" marker-end="url(#scheduleArrow)"></line>`);
                 });
             }
