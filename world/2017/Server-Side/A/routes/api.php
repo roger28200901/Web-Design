@@ -32,5 +32,5 @@ Route::middleware('auth.token')->group(function () {
     Route::delete('/v1/schedule/{id}', 'SchedulesController@destroy');
 
     Route::get('/v1/route/search/{from_place_id}/{to_place_id}/{departure_time?}', 'RoutesController@search');
-    Route::post('/v1/route/selection', 'RoutesController@store');
+    Route::post('/v1/route/selection', 'RoutesController@storeHistory');
 });

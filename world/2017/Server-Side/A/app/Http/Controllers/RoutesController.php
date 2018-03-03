@@ -68,7 +68,7 @@ class RoutesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function storeHistory(Request $request)
     {
         /* Setting Validation Rules */
         $rules = [
