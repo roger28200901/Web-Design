@@ -105,6 +105,83 @@ class RoutesController extends Controller
     }
 
     /**
+     * Display a listing of the day schedules.
+     *
+     * @param string $schedule_id
+     * @param string $departure_time
+     * @return \Illuminate\Http\Response
+     */
+    public function daySchedules($schedule_id, $departure_time = null)
+    {
+        /* Parsing Schedule ID From JSON Format To Array */
+        $schedule_id = json_decode($schedule_id);
+
+        /* Using Current Time As Default Departure Time */
+        if (!$departure_time) {
+            $departure_time = date('H:i:s');
+        }
+
+        /* Getting Schedules Via Schedule ID */
+        $schedules = Schedule::whereIn('id', $schedule_id)->orderBy('departure_time')->get(['from_place_id', 'to_place_id']);
+
+        /* Getting Transport Directions Via Schedules From Place And To Place */
+        $place_directions = $schedules->pluck('to_place_id', 'from_place_id')->toArray();
+
+        /* Getting Departure Times Of Source Location */
+        $departure_times = Schedule::where([
+            ['from_place_id', $schedules[0]->from_place_id],
+            ['to_place_id', $schedules[0]->to_place_id],
+            ['departure_time', '>=', $departure_time]
+        ])->orderBy('departure_time')->pluck('departure_time');
+
+        /* Searching Available Day Schedules */
+        $target_place_id = end($place_directions); // Setting target place.
+        $day_schedules = array(); // Initializing day schedules.
+        foreach ($departure_times as $departure_time) {
+            $current_time = $departure_time; // Setting current time.
+            $this->temporary_schedules = array(); // Initializing temporary schedules.
+
+            /* Retrieving */
+            reset($place_directions);
+            do {
+                /* Finding Next Schedule Via Direction And Departure Time */
+                $next_schedule = collect($this->schedule_tables[key($place_directions)][current($place_directions)])->where('departure_time', '>=', $current_time)->first();
+
+                /* Setting Current Time Via Next Schedule */
+                $current_time = $next_schedule['arrival_time'];
+
+                /* Pushing Into Temporary Schedules */
+                array_push($this->temporary_schedules, $next_schedule);
+            } while (next($place_directions)); // While There Are Still Has Schedule
+
+            /* Compacting Temporary Schedules Into Expected Schedules Data */
+            $schedules = collect($this->temporary_schedules)->map(function ($schedule) {
+                /* Compacting Expected Places Data */
+                $from_place = $schedule['from_place'];
+                $to_place = $schedule['to_place'];
+                unset($from_place['place_id'], $to_place['place_id']);
+
+                /* Compacting Expected Schedule Data Into Result */
+                $result = array(
+                    'id' => $schedule['id'],
+                    'type' => $schedule['type'],
+                    'line' => $schedule['line'],
+                    'departure_time' => $schedule['departure_time'],
+                    'arrival_time' => $schedule['arrival_time'],
+                    'from_place' => $from_place,
+                    'to_place' => $to_place
+                );
+                return $result;
+            });
+            /* Pushing Into Routes Stack */
+            array_push($day_schedules, $schedules);
+        }
+
+        /* Returning Response */
+        return response()->json($day_schedules);
+    }
+
+    /**
      * Retrieve a listing of the route with expect count of routes.
      * Using DFS (Depth-First-Search) algorithm to retrieve every schedule.
      *
