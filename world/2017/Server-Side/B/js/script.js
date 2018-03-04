@@ -34,7 +34,8 @@ const app = new Vue({
             }
         },
         places: [],
-        routes: []
+        routes: [],
+        daySchedules: []
     },
     mounted: function () {
         this.refresh();
@@ -165,7 +166,10 @@ const app = new Vue({
                 success: function (response) {
                     self.routes = response;
                     self.drawSchedule(self.routes[0]);
-                    self.storeHistory(fromPlaceId, toPlaceId, self.routes[0].schedules);
+                    if (self.routes.length) {
+                        self.getDaySchedulesBySchedules(self.routes[0].schedules);
+                        self.storeHistory(fromPlaceId, toPlaceId, self.routes[0].schedules);
+                    }
                 },
                 statusCode: {
                     401: function (response) {
@@ -183,6 +187,33 @@ const app = new Vue({
                 });
             }
             $('#Layer_schedules').html(schedules.join(''));
+        },
+        getDaySchedulesBySchedules: function (schedules) {
+            var self = this;
+
+            var scheduleId = [];
+            schedules.forEach(function (schedule) {
+                scheduleId.push(schedule.id);
+            });
+
+            /* Sending Ajax To Get Day Schedules Via Schedules */
+            $.ajax({
+                url: self.baseAPIUrl + `/schedule/day/${JSON.stringify(scheduleId)}/${self.forms.search.departureTime}`,
+                type: 'get',
+                contentType: 'application/json',
+                data: {
+                    token: self.user.token
+                },
+                dataType: 'json',
+                success: function (response) {
+                    self.daySchedules = response;
+                },
+                statusCode: {
+                    401: function (response) {
+                        self.launchMessage('danger', response.responseJSON.message);
+                    }
+                }
+            });
         },
         storeHistory: function (fromPlaceId, toPlaceId, schedules) {
             var self = this;
