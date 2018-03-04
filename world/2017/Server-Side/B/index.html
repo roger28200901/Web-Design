@@ -77,33 +77,18 @@
                                 <button type="submit" class="btn btn-primary">Get Routes</button>
                             </form>
                             <br>
-                            <ul class="list-group">
-                                <li class="list-group-item">
-                                    No: 1
+                            <ul class="list-group" v-show="daySchedules.length">
+                                <li class="list-group-item" v-for="(schedule, index) in daySchedules">
+                                    <b>No: {{ index + 1 }}</b>
                                     <div class="row">
-                                        <div class="col-md-6">Time Schedule:</div>
-                                        <div class="col-md-6">08:00:00<br>08:16:00</div>
-                                    </div>
-                                </li>
-                                <li class="list-group-item">
-                                    No: 1
-                                    <div class="row">
-                                        <div class="col-md-6">Time Schedule:</div>
-                                        <div class="col-md-6">08:00:00<br>08:16:00</div>
-                                    </div>
-                                </li>
-                                <li class="list-group-item">
-                                    No: 1
-                                    <div class="row">
-                                        <div class="col-md-6">Time Schedule:</div>
-                                        <div class="col-md-6">08:00:00<br>08:16:00</div>
-                                    </div>
-                                </li>
-                                <li class="list-group-item">
-                                    No: 1
-                                    <div class="row">
-                                        <div class="col-md-6">Time Schedule:</div>
-                                        <div class="col-md-6">08:00:00<br>08:16:00</div>
+                                        <div class="col-md-6">
+                                            <br>Depart:</br>
+                                            <br>Arrive:</br>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <br>{{ schedule[0].departure_time }}</br>
+                                            <br>{{ schedule[schedule.length - 1].arrival_time }}</br>
+                                        </div>
                                     </div>
                                 </li>
                             </ul>
