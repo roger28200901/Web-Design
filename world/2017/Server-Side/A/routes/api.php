@@ -33,4 +33,5 @@ Route::middleware('auth.token')->group(function () {
 
     Route::get('/v1/route/search/{from_place_id}/{to_place_id}/{departure_time?}', 'RoutesController@search');
     Route::post('/v1/route/selection', 'RoutesController@storeHistory');
+    Route::get('/v1/schedule/day/{schedule_id}/{departure_time?}', 'RoutesController@daySchedules');
 });
