@@ -99,14 +99,56 @@ h1 {
 
 #Layer_schedules line {
     stroke: red;
-    stroke-linecap: round;
     stroke-width: 7px;
 }
 
 #Layer_schedules line.type-BUS {
-    stroke-dasharray: 20;
+    stroke-dasharray: 7;
 }
 
 #scheduleArrow {
     fill: red;
+}
+
+.schedule-information .schedule-left-border::before,
+.schedule-information:last-child .schedule-left-border::after {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: -10px;
+    width: 16px;
+    height: 16px;
+    border-width: 3px;
+    border-style: solid;
+    border-color: gray;
+    border-radius: 50%;
+    background: white;
+}
+
+.schedule-information:last-child .schedule-left-border::after {
+    top: auto;
+    bottom: -15px;
+}
+
+.schedule-information .schedule-left-border {
+    border-left-width: 5px;
+    border-left-style: solid;
+    border-left-color: red;
+}
+
+.schedule-information .type-BUS {
+    border-left-style: dotted;
+}
+
+.schedule-information > div {
+    min-height: 150px;
+}
+
+.schedule-information .row > div {
+    position: relative;
+}
+
+.schedule-information .last-item {
+    position: absolute;
+    bottom: -15px;
 }
