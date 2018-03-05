@@ -35,7 +35,9 @@ const app = new Vue({
         },
         places: [],
         routes: [],
-        daySchedules: []
+        daySchedules: [],
+        selectedSchedules: null,
+        schedulesInformationVisible: null
     },
     mounted: function () {
         this.refresh();
@@ -187,6 +189,10 @@ const app = new Vue({
                 });
             }
             $('#Layer_schedules').html(schedules.join(''));
+        },
+        showSchedulesInfomation: function (schedules) {
+            this.selectedSchedules = schedules;
+            this.schedulesInformationVisible = true;
         },
         getDaySchedulesBySchedules: function (schedules) {
             var self = this;
