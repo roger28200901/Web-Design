@@ -56,7 +56,7 @@
 
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-sm-3 col-md-2 d-sm-block bg-light sidebar">
+                    <div class="col-sm-3 col-md-3 d-sm-block bg-light sidebar">
                         <div class="container">
                             <form v-on:submit.prevent="searchRoutes">
                                 <div class="form-group">
@@ -78,7 +78,7 @@
                             </form>
                             <br>
                             <ul class="list-group" v-show="daySchedules.length">
-                                <li class="list-group-item" title="See Detail" v-for="(schedule, index) in daySchedules">
+                                <li class="list-group-item" title="See Detail" v-for="(schedule, index) in daySchedules" v-on:click="showSchedulesInfomation(schedule)">
                                     <b>No: {{ index + 1 }}</b>
                                     <div class="row">
                                         <div class="col-md-6">
@@ -92,6 +92,28 @@
                                     </div>
                                 </li>
                             </ul>
+                        </div>
+                    </div>
+
+                    <!-- Information About Schedules -->
+                    <div class="col-sm-3 col-md-3 bg-light sidebar" v-show="schedulesInformationVisible">
+                        <div class="container">
+                            <div>
+                                <button type="button" class="btn btn-secondary" v-on:click="schedulesInformationVisible = false">BACK</button>
+                            </div>
+                            <hr>
+                            <div class="schedule-information" v-for="(schedule, index) in selectedSchedules">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div>{{ schedule.departure_time }}</div>
+                                        <div class="last-item" v-if="index === selectedSchedules.length - 1">{{ schedule.arrival_time }}</div>
+                                    </div>
+                                    <div class="col-md-8 schedule-left-border" v-bind:class="'type-' + schedule.type">
+                                        <div>{{ schedule.from_place.name }}</div>
+                                        <div class="last-item" v-if="index === selectedSchedules.length - 1">{{ schedule.to_place.name }}</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
