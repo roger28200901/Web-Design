@@ -1,5 +1,28 @@
 const app = new Vue({
     el: '#app',
+    components: {
+        'place-component': {
+            props: [
+                'x',
+                'y',
+                'name',
+                'place_id',
+                'image_path',
+                'description'
+            ],
+            template: `
+                <g>
+                    <circle :cx="x" :cy="y" r="8" :title="name + ' ' + place_id" :data-place-id="place_id" data-toggle="popover"></circle>
+                    <text :x="parseInt(x) - 30" :y="parseInt(y) + 30" :title="name + ' ' + place_id" :data-place-id="place_id">{{ name }}</text>
+                    <div :id="'placeData' + place_id">
+                        <img :src="'../A/public/img/' + image_path" width="200px">
+                        <br>Description:</br>
+                        <span>{{ description }}</span>
+                    </div>
+                </g>
+            `
+        }
+    },
     data: {
         baseAPIUrl: '../A/api/v1',
         message: {
@@ -264,7 +287,6 @@ const app = new Vue({
                 dataType: 'json',
                 success: function (response) {
                     self.places = response;
-                    self.drawPlaces();
                 },
                 statusCode: {
                     401: function (response) {
@@ -375,23 +397,6 @@ const app = new Vue({
                     self.launchMessage('danger', response.responseJSON.message);
                 }
             });
-        },
-        drawPlaces: function () {
-            var places = [];
-
-            this.places.forEach(function (place, i) {
-                places.push(`
-                    <circle cx="${place.x}" cy="${place.y}" r="8" title="${place.name + ' ' + place.place_id}" data-place-id="${place.place_id}" data-toggle="popover"></circle>
-                    <text x="${place.x - 30}" y="${place.y + 30}" title="${place.name + ' ' + place.place_id}" data-place-id="${place.place_id}">${place.name}</text>
-                    <div id="placeData${place.place_id}">
-                        <img src="../A/public/img/${place.image_path}" width="200px">
-                        <br>Description:</br>
-                        <span>${place.description}</span>
-                    </div>
-                `);
-            });
-
-            $('#Layer_places').html(places.join(''));
         },
         popoverPlaces: function () {
             $('svg').popover({
