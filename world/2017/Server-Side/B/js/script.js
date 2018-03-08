@@ -12,7 +12,7 @@ const app = new Vue({
             ],
             template: `
                 <g>
-                    <circle :cx="x" :cy="y" r="8" :title="name + ' ' + place_id" :data-place-id="place_id" data-toggle="popover"></circle>
+                    <circle :cx="x" :cy="y" r="8" :title="name + ' ' + place_id" :data-place-id="place_id" data-toggle="popover" v-on:mouseover="scalePoint($event)" v-on:mouseleave="unscalePoint($event)"></circle>
                     <text :x="parseInt(x) - 30" :y="parseInt(y) + 30" :title="name + ' ' + place_id" :data-place-id="place_id">{{ name }}</text>
                     <div :id="'placeData' + place_id">
                         <img :src="'../A/public/img/' + image_path" width="200px">
@@ -20,7 +20,15 @@ const app = new Vue({
                         <span>{{ description }}</span>
                     </div>
                 </g>
-            `
+            `,
+            methods: {
+                scalePoint: function (event) {
+                    event.target.setAttribute('r', 12);
+                },
+                unscalePoint: function (event) {
+                    event.target.setAttribute('r', 8);
+                }
+            }
         }
     },
     data: {
