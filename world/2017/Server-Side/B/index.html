@@ -1021,7 +1021,9 @@
                             </g>
 
                             <g id="Layer_schedules"></g>
-                            <g id="Layer_places"></g>
+                            <g id="Layer_places">
+                                <place-component v-for="place in places":key="place.id" v-bind="place"></place-component>
+                            </g>
 
                             <!-- Components -->
                             <defs>
