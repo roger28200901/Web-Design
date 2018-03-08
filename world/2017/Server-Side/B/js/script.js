@@ -87,8 +87,8 @@ const app = new Vue({
         },
         initialUserData: function () {
             this.user = {
-                token: '',
-                role: '',
+                token: sessionStorage.getItem('userToken') || '',
+                role: sessionStorage.getItem('userRole') || '',
             };
         },
         initialAuthData: function () {
@@ -134,6 +134,8 @@ const app = new Vue({
                 data: JSON.stringify(self.forms.auth),
                 dataType: 'json',
                 success: function (response) {
+                    sessionStorage.setItem('userToken', response.token);
+                    sessionStorage.setItem('userRole', response.role);
                     self.launchMessage('success', 'Login Success');
                     self.user.token = response.token;
                     self.user.role = response.role;
@@ -157,6 +159,7 @@ const app = new Vue({
                 },
                 dataType: 'json',
                 success: function (response) {
+                    sessionStorage.clear();
                     self.launchMessage('success', 'Logout Success');
                     self.initialUserData();
                 },
