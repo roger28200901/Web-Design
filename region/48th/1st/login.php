@@ -17,6 +17,7 @@ if (3 <= $_SESSION['login_times']) {
 </head>
 
 <body>
+    <h1>會員登入</h1>
     <form method="post" action="auth.php">
         <div>
             <label>帳號</label>

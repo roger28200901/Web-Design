@@ -14,6 +14,7 @@ $logs = $pdo->query(sprintf("select * from logs inner join users on users.id=log
 </head>
 
 <body>
+    <h1>系統記錄</h1>
     <a href="admin-page.php">返回</a>
     <table>
         <tr>
