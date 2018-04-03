@@ -5,9 +5,12 @@ include('config.php');
 $type = '新增';
 $action = 'template-store.php';
 if (isset($_GET['id'])) {
+    $select_template = $pdo->query(sprintf('select * from templates where id=%s', $_GET['id']))->fetch();
+    $type = '編輯';
+    $action = 'template-update.php';
 }
 
-$templates = $pdo->query('select * from templates where is_basic=1')->fetchAll();
+$templates = $pdo->query('select * from templates')->fetchAll();
 
 ?>
 <!doctype html>
@@ -24,12 +27,13 @@ $templates = $pdo->query('select * from templates where is_basic=1')->fetchAll()
     <label>選擇版型</label>
     <select id="template">
         <?php foreach ($templates as $template) {?>
-        <option value="<?= $template['path'] ?>"><?= $template['name'] ?></option>
+        <option value="<?= $template['path'] ?>"<?= $template['id'] === $select_template['id'] ? ' selected' : null ?>><?= $template['name'] ?></option>
         <?php } ?>
     </select>
     <a href="template-index.php">返回</a>
     <form method="post" action="<?= $action ?>">
-        <input name="name" value="" required>
+        <input name="id" type="hidden" value="<?= $select_template['id'] ?: null ?>">
+        <input name="name" value="<?= $select_template['name'] ?: null ?>" required>
         <input name="content" id="content" type="hidden" required>
         <button>儲存</button>
     </form>
