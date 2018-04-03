@@ -3,6 +3,7 @@
 include('config.php');
 
 $type = '新增';
+$action = 'template-store.php';
 if (isset($_GET['id'])) {
 }
 
@@ -26,8 +27,12 @@ $templates = $pdo->query('select * from templates where is_basic=1')->fetchAll()
         <option value="<?= $template['path'] ?>"><?= $template['name'] ?></option>
         <?php } ?>
     </select>
-    <a id="save" href="#">儲存</a>
     <a href="e-newsletter.php">返回</a>
+    <form method="post" action="<?= $action ?>">
+        <input name="name" value="" required>
+        <input name="content" id="content" type="hidden" required>
+        <button>儲存</button>
+    </form>
     <div id="templatePanel"></div>
     <div>
         <label>背景顏色</label>
@@ -54,15 +59,22 @@ $templates = $pdo->query('select * from templates where is_basic=1')->fetchAll()
             $element.css('border', '1px solid gray');
 
         });
+        
         $('#backgroundColor').change(function () {
             if ($element) {
                 $element.css('background-color', $(this).val());
             }
         });
+
         $('#fontColor').change(function () {
             if ($element) {
                 $element.css('color', $(this).val());
             }
+        });
+
+        $('form').submit(function () {
+            $(document).find('#templatePanel *').css('border', '');
+            $('#content').val($('#templatePanel').html());
         });
    </script>
 </body>
