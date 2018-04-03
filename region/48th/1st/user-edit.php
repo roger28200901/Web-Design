@@ -22,6 +22,7 @@ if (isset($_GET['id'])) {
 <body>
     <h1><?= $type ?>使用者</h1>
     <form method="post" action="<?= $action ?>">
+        <input name="id" type="hidden" value="<?= $user['id'] ?: null ?>">
         <div>
             <label>帳號</label>
             <input name="account" value="<?= $user['account'] ?: null ?>" required>
