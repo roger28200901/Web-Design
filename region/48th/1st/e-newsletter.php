@@ -1,4 +1,4 @@
-<!doctype html>
+<!doctype>
 <html>
 
 <head>
@@ -8,7 +8,7 @@
 
 <body>
     <h1>電子報製作系統</h1>
-    <a href="template-edit.php">新增</a>
+    <a href="template-index.php">管理版型</a>
     <a href="index.php">返回</a>
 </body>
 

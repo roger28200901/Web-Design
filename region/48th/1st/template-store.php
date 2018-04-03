@@ -10,5 +10,5 @@ $pdo->query(sprintf("insert into templates (name, path, is_basic) values ('%s', 
     $path
 ));
 
-header('location:e-newsletter.php');
+header('location:template-index.php');
 

@@ -27,7 +27,7 @@ $templates = $pdo->query('select * from templates where is_basic=1')->fetchAll()
         <option value="<?= $template['path'] ?>"><?= $template['name'] ?></option>
         <?php } ?>
     </select>
-    <a href="e-newsletter.php">返回</a>
+    <a href="template-index.php">返回</a>
     <form method="post" action="<?= $action ?>">
         <input name="name" value="" required>
         <input name="content" id="content" type="hidden" required>
