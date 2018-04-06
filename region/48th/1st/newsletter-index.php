@@ -10,14 +10,13 @@ $newsletters = $pdo->query("select newsletters.*, templates.name from newsletter
 
 <head>
     <meta charset="utf-8">
-    <title>電子報製作系統</title>
+    <title>電子報管理</title>
 </head>
 
 <body>
-    <h1>電子報製作系統</h1>
+    <h1>電子報管理</h1>
     <a href="newsletter-edit.php">新增電子報</a>
-    <a href="template-index.php">管理版型</a>
-    <a href="index.php">返回</a>
+    <a href="e-newsletter.php">返回</a>
     <table>
         <tr>
             <th>電子報編號</th>
@@ -32,13 +31,12 @@ $newsletters = $pdo->query("select newsletters.*, templates.name from newsletter
         <tr>
             <td><?= $newsletter['id'] ?></td>
             <td><?= $newsletter['title'] ?></td>
-            <td><?= $newsletter['text'] ?></td>
+            <td style="word-break: break-all;"><?= $newsletter['text'] ?></td>
             <td><?= $newsletter['image'] ?></td>
             <td><?= $newsletter['link'] ?></td>
             <td><?= $newsletter['name'] ?></td>
             <td>
-                <a href="#">預覽</a>
-                <a href="#">編輯</a>
+                <a href="newsletter-edit.php?id=<?= $newsletter['id'] ?>">編輯</a>
                 <a href="#">刪除</a>
             </td>
         </tr>        

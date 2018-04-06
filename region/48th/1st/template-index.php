@@ -16,7 +16,7 @@ $templates = $pdo->query('select * from templates')->fetchAll();
 <body>
     <h1>版型管理</h1>
     <a href="template-edit.php">新增</a>
-    <a href="newsletter-index.php">返回</a>
+    <a href="e-newsletter.php">返回</a>
     <table>
         <tr>
             <th>版型編號</th>
